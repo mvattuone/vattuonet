@@ -19,38 +19,25 @@ time, mark, audio, video {
     vertical-align: baseline;
 }
 
-body {
-    background: #5D9FCB;
+body, #container {
+    background: #063E63;
+}
+
+#container{
+    opacity:0;
+    -webkit-transition: opacity 2.5s ease-in;
+    transition: opacity 2.5s ease-in;
+    height:100vh;
+    z-index:999;
+    position:relative;
+}
+
+#container.loader {
+    opacity:1;
 }
 
 video {
     visibility: hidden;
-}
-
-#nav {
-    height: 50px;
-}
-
-h1 {
-    font-size:32px;
-    display:inline-block;
-    color:#FFFFFE;
-}
-
-#nav ul {
-    float:right;
-    list-style-type: none;
-    margin:0;
-    padding:0;
-}
-
-#nav ul li {
-    display:inline-block;
-    padding-right:12px;
-    color:#FFFFFE;
-}
-
-video {
     position: absolute;
     top: 50%;
     left: 50%;
