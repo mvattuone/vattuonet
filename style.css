@@ -37,7 +37,8 @@ body, #container {
 
 .panel { 
     width: 100vw;
-    height: 100vh;
+    height: 100%;
+    overflow:scroll;
     top: 0;
     left: 0;
     position: absolute;
@@ -136,10 +137,11 @@ canvas {
 }
 
 .panel-wrapper {
-    max-width:960px;
     display:block;
     margin:0 auto;
-    padding:20px 0;
+    padding:20px 10%;
+    height:100%;
+    overflow:scroll;
 }
 
 /* Flip canvas so text renders correctly */

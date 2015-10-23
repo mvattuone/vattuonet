@@ -1,9 +1,6 @@
 /**
- * Populates blog with posts returned from the Tumblr API.
- * @param {string} foo This is a param with a description too long to fit in
- *     one line.
- * @return {array} This returns something that has a description too long to
- *     fit in one line.
+ * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
+ * @return the blog panel populated with posts
  */
 
  getPosts = function() {
@@ -21,14 +18,16 @@
         $( "script#postTemplate" ).html()
     );
     posts.forEach(function(post) {
-      $('.posts').append(postTemplate({
-        'title': post['regular-title'],
-        'body': post['regular-body']
-      }));
+      if (!post['tags']) {
+        $('.posts').append(postTemplate({
+          'title': post['regular-title'],
+          'body': post['regular-body']
+        }));
+      }
     });
   });
 
-  return;
+  return true;
 };
 
 
@@ -213,7 +212,9 @@ onDocumentMouseDown = function(event) {
   var route;
   if (intersects[ 0 ].object.id === 8) {
     route = "blog";
-    getPosts();
+    if (!blogTriggered) {
+      blogTriggered = getPosts();  
+    }
   }
   else if (intersects[ 0 ].object.id === 10) {
     route = "contact";
@@ -423,4 +424,5 @@ createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
   init();
+  window.blogTriggered = undefined; // Temporary fix
 });
