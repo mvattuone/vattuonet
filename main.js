@@ -81,13 +81,13 @@ createSpinner = function() {
     hwaccel: true,
     position: 'absolute' 
   }
-  app.target = document.getElementById('loading');
+  app.target = $('.spinner');
   app.spinner = new Spinner(opts).spin(app.target);
 };
 
 revealScene = function(event) { 
-  $('#loading').removeClass('active reveal');
-  $('#loading.active').off('transitionend', revealScene);
+  $('body').addClass('loaded');
+  app.spinner.stop();
 }
 
 draw = function(type,v,c,w,h,first) {
@@ -130,19 +130,16 @@ draw = function(type,v,c,w,h,first) {
 
   setTimeout(function(){ 
     if (first) {
-      $('#loading.active').on('transitionend', revealScene);
-      app.spinner.stop();
-      $('#loading').addClass('reveal');
+      revealScene();
     }
 
-    var choice = Math.random();
-
+    var choice = Math.random() ;
     if (choice < 0.4) {
-      draw("greyScale",video,app.context,cw,ch);
+      draw("greyScale",app.video,app.context,cw,ch);
     } else if (choice >= 0.4 && choice < 0.7) {
-      draw("emboss", video,app.context,cw,ch);
+      draw("emboss", app.video,app.context,cw,ch);
     } else {
-      draw("normal", video,app.context,cw,ch);
+      draw("normal", app.video,app.context,cw,ch);
     }
   }, 0);
 };
@@ -175,19 +172,19 @@ embossDraw = function(data, idata) {
 };
 
 successCallback = function(stream) {
-  if (video.mozSrcObject !== undefined) {
-    video.mozSrcObject = stream;
+  if (app.video.mozSrcObject !== undefined) {
+    app.video.mozSrcObject = stream;
   } else {
-    video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-    video.addEventListener('play', function(){
-      cw = video.clientWidth;
-      ch = video.clientHeight;
+    app.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
+    app.video.onplay = function(){
+      cw = app.video.clientWidth;
+      ch = app.video.clientHeight;
       app.canvas.width = cw;
       app.canvas.height = ch;
-      draw("greyScale",video,app.context,cw,ch,true);
-    },false);
+      draw("greyScale",app.video,app.context,cw,ch,true);
+    };
   };
-  video.play();
+  app.video.play();
 };
 
 // The error callback is also triggered when the camera is not active...
@@ -297,15 +294,14 @@ init = function() {
   if (navigator.getUserMedia) {
     navigator.getUserMedia({video: true}, successCallback, errorCallback);
   } else {
-    console.log('Native device media streaming (getUserMedia) not supported in this browser.');
+    throw 'getUserMedia Error: Native device media streaming (getUserMedia) not supported in this browser.';
   }
 
   // Detect if the audio context is supported.
   window.AudioContext = ( window.AudioContext || window.webkitAudioContext || null );
 
   if (!AudioContext) { 
-    console.log("AudioContext not supported.  Fallback.")
-    //TODO: Add a fallback?
+    $('#soundControls').hide();
   } 
 
   app.scene = new THREE.Scene();
@@ -323,7 +319,7 @@ init = function() {
   app.renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( app.renderer.domElement );
 
-  var video = document.querySelector('video');
+  app.video = $('#video')[0];
 
   app.canvas = document.createElement('canvas');
   app.canvas.id = "canvas";
