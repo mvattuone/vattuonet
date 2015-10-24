@@ -81,13 +81,13 @@ createSpinner = function() {
     hwaccel: true,
     position: 'absolute' 
   }
-  app.target = $('.spinner');
+  app.target = $('.spinner')[0];
   app.spinner = new Spinner(opts).spin(app.target);
 };
 
 revealScene = function(event) { 
-  $('body').addClass('loaded');
   app.spinner.stop();
+  $('body').addClass('loaded');
 }
 
 draw = function(type,v,c,w,h,first) {
@@ -129,10 +129,6 @@ draw = function(type,v,c,w,h,first) {
   }
 
   setTimeout(function(){ 
-    if (first) {
-      revealScene();
-    }
-
     var choice = Math.random() ;
     if (choice < 0.4) {
       draw("greyScale",app.video,app.context,cw,ch);
@@ -142,6 +138,10 @@ draw = function(type,v,c,w,h,first) {
       draw("normal", app.video,app.context,cw,ch);
     }
   }, 0);
+
+  if (first) {
+    
+  }
 };
 
 greyScaleDraw = function(data) {
@@ -176,15 +176,23 @@ successCallback = function(stream) {
     app.video.mozSrcObject = stream;
   } else {
     app.video.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-    app.video.onplay = function(){
-      cw = app.video.clientWidth;
-      ch = app.video.clientHeight;
-      app.canvas.width = cw;
-      app.canvas.height = ch;
-      draw("greyScale",app.video,app.context,cw,ch,true);
-    };
   };
-  app.video.play();
+    
+  app.video.onplay = function() {
+    cw = app.video.clientWidth;
+    ch = app.video.clientHeight;
+    app.canvas.width = cw;
+    app.canvas.height = ch;
+    draw("greyScale",app.video,app.context,cw,ch,true);
+  };
+
+  app.video.onloadeddata = function() {
+    revealScene();
+    app.video.play();
+  };
+
+  app.video.load();
+  
 };
 
 // The error callback is also triggered when the camera is not active...
@@ -422,3 +430,4 @@ $(document).ready(function() {
   init();
   window.blogTriggered = undefined; // Temporary fix
 });
+
