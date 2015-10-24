@@ -7,7 +7,7 @@ body, #container {
 
 .spinner-wrapper {
     position:absolute;
-    z-index:999;
+    z-index:4;
     top:0; left:0;
     opacity:1;
     height:100%;
@@ -25,6 +25,20 @@ body, #container {
     opacity:0;
 }
 
+#scene {
+    position:absolute;
+    top:0;
+
+    -webkit-transition: opacity 1.5s ease-in;
+    transition: opacity 1.5s ease-in;
+    opacity:0;
+}
+
+.loaded #scene {
+    opacity:1;
+    z-index:5;
+}
+
 .panel { 
     width: 100vw;
     height: 100%;
@@ -32,8 +46,8 @@ body, #container {
     top: 0;
     left: 0;
     position: absolute;
-    z-index: 0;
-    opacity: 0; 
+    z-index:0;
+    opacity:0; 
 }
 
 .panel.current.exit {
@@ -78,7 +92,7 @@ body, #container {
 
 .panel.current { 
     opacity:1;
-    z-index:997;
+    z-index:2;
     transition: all 0.3s linear;
 }
 
@@ -98,32 +112,8 @@ body, #container {
     transform: translateY(0);
 }
 
-#soundControls {
-    position:absolute;
-    bottom:20px; left:20px;
-    z-index:998; 
-}
-
-#soundControls label,
-#soundControls span { 
-    color:#DDD;
-}
-
-#soundControls span.active {
-    color:#FFF;
-}
-
-video {
+#video {
     visibility: hidden;
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin: -180px 0 0 -240px;
-}
-
-canvas {
-    position:absolute;
-    top:0;
 }
 
 .panel-wrapper {
@@ -132,13 +122,4 @@ canvas {
     padding:20px 10%;
     height:100%;
     overflow:scroll;
-}
-
-/* Flip canvas so text renders correctly */
-#canvas { 
-    -moz-transform: scale(-1, 1);
-    -webkit-transform: scale(-1, 1);
-    -o-transform: scale(-1, 1);
-    transform: scale(-1, 1);
-    filter: FlipH;
 }

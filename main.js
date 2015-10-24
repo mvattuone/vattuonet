@@ -120,7 +120,7 @@ draw = function(type,v,c,w,h,first) {
     c.fillText('TƎᴎOUTTAV', 30, 80); // TODO: Figure out how to mirror the text programmatically... 
   }
 
-  if (textChoice > 0.3 && textChoice < 0.31) {
+  if (textChoice > 0.3 && textChoice < 0.9) {
     addTitle(c);
   } 
 
@@ -209,9 +209,10 @@ onDocumentTouchStart = function(event) {
 
 onDocumentMouseDown = function(event) {
   event.preventDefault();
+  alert('foo');
 
   var intersects = app.camControls.getIntersection(event);
-
+  alert(intersects);
   if (!intersects) { return false; }
 
   var route;
@@ -280,20 +281,9 @@ labelSphere = function(label) {
   return textMesh;
 }
 
-/* We use the value stored in app.playAudio in the mouseMove event handler */
-toggleSound = function(e) {
-  $('#soundControls span.active').removeClass('active');
-  app.playAudio = event.currentTarget.className;
-  $(event.currentTarget).addClass('active');
-};
-
 setUIEventHandlers = function() {
   $('.panel-wrapper > a').on('click', closePanel);
   $('.panel').on('transitionend', sanitizePanel);
-
-  /* Sound Controls */
-
-  $('#soundControls span').on('click', toggleSound);
 };
 
 init = function() {    
@@ -309,7 +299,7 @@ init = function() {
   window.AudioContext = ( window.AudioContext || window.webkitAudioContext || null );
 
   if (!AudioContext) { 
-    $('#soundControls').hide();
+    // fallback
   } 
 
   app.scene = new THREE.Scene();
@@ -323,7 +313,7 @@ init = function() {
   app.clock = new THREE.Clock();
 
   app.renderer = new THREE.WebGLRenderer({ alpha:true });
-  app.renderer.domElement.id = "visibleCanvas";
+  app.renderer.domElement.id = "scene";
   app.renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( app.renderer.domElement );
 
@@ -415,11 +405,8 @@ init = function() {
 
   setUIEventHandlers();
 
-  app.playAudio = 'no';
-  $('#soundControls span.no').addClass('active');
-
-  $('#visibleCanvas').on('mousedown', onDocumentMouseDown);
-  $('#visibleCanvas').on('touchstart', onDocumentTouchStart);
+  $('#scene').on('mousedown', onDocumentMouseDown);
+  $('#scene').on('touchstart', onDocumentTouchStart);
 
   render();
 }
