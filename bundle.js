@@ -140,45 +140,17 @@ module.exports = function(THREE) {
 
 // TODO: Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
 // TODO: Can we remove the second 
+// NPM modules
 $ = require('jquery');
 _ = require('underscore');
 THREE = require('threejs-build');
-VattuonetControls = require('./controls')(THREE);
 helvetiker = require('three.regular.helvetiker');
 Spinner = require('spin');
 StackBlur = require('stackblur-canvas');
 
-/**
- * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
- * @return the blog panel populated with posts
- */
-
- getPosts = function() {
-  
-  /* Tumblr API failwhale */
-  var blogPanel = $('#blog.panel'),
-      script = document.createElement('script');
-
-  script.src = 'http://vattuonet.tumblr.com/api/read/json';
-  document.head.appendChild(script);
-    
-  script.addEventListener('load', function(e) {
-    var posts = window.tumblr_api_read.posts,
-    postTemplate = _.template(
-        $( "script#postTemplate" ).html()
-    );
-    posts.forEach(function(post) {
-      if (!post['tags']) {
-        $('.posts').append(postTemplate({
-          'title': post['regular-title'],
-          'body': post['regular-body']
-        }));
-      }
-    });
-  });
-
-  return true;
-};
+// User made modules
+Tumblr = require('./tumblr')
+VattuonetControls = require('./controls')(THREE);
 
 closePanel = function(event) {
   event.preventDefault();
@@ -321,7 +293,7 @@ onDocumentMouseDown = function(event) {
   if (intersects[ 0 ].object.id === 8) {
     route = "blog";
     if (!blogTriggered) {
-      blogTriggered = getPosts();  
+      blogTriggered = Tumblr.getPosts();  
     }
   }
   else if (intersects[ 0 ].object.id === 10) {
@@ -503,11 +475,7 @@ initScene = function() {
 //    This would probably be included in the dots module
 // scene = require('Scene') ??? 
 //    The initialization of the webGL renderer, scene, controls, context? 
-// tumblr = require('Tumblr')
-//    Code pertaining to getting Tumblr stuff
-//    Tumblr.getPosts() no argument returns all posts
-//    Tumblr.getPosts('') empty string returns all posts with no tags
-//    Tumblr.getPosts('foo') would return all posts tagged with foo
+
 
 init = function() {    
 
@@ -610,7 +578,7 @@ $(document).ready(function() {
 });
 
 
-},{"./controls":1,"jquery":3,"spin":4,"stackblur-canvas":5,"three.regular.helvetiker":6,"threejs-build":7,"underscore":8}],3:[function(require,module,exports){
+},{"./controls":1,"./tumblr":9,"jquery":3,"spin":4,"stackblur-canvas":5,"three.regular.helvetiker":6,"threejs-build":7,"underscore":8}],3:[function(require,module,exports){
 /*!
  * jQuery JavaScript Library v2.1.4
  * http://jquery.com/
@@ -13142,4 +13110,48 @@ f!==d.currentFrame&&(this.morphTargetInfluences[d.lastFrame]=0,this.morphTargetI
   }
 }.call(this));
 
+},{}],9:[function(require,module,exports){
+/**
+ * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
+ * @return the blog panel populated with posts
+ */
+
+// tumblr = require('Tumblr')
+//    Code pertaining to getting Tumblr stuff
+//    Tumblr.getPosts() no argument returns all posts
+//    Tumblr.getPosts('') empty string returns all posts with no tags
+//    Tumblr.getPosts('foo') would return all posts tagged with foo
+
+
+ getPosts = function() {
+  
+  /* Tumblr API failwhale */
+  var blogPanel = $('#blog.panel'),
+      script = document.createElement('script');
+
+  script.src = 'http://vattuonet.tumblr.com/api/read/json';
+  document.head.appendChild(script);
+    
+  script.addEventListener('load', function(e) {
+    var posts = window.tumblr_api_read.posts,
+    postTemplate = _.template(
+        $( "script#postTemplate" ).html()
+    );
+    posts.forEach(function(post) {
+      if (!post['tags']) {
+        $('.posts').append(postTemplate({
+          'title': post['regular-title'],
+          'body': post['regular-body']
+        }));
+      }
+    });
+  });
+
+  return true;
+};
+
+
+module.exports = {
+    getPosts: getPosts,
+};
 },{}]},{},[2]);
