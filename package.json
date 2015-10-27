@@ -22,6 +22,7 @@
   "dependencies": {
     "jquery": "^2.1.4",
     "spin": "0.0.1",
+    "stackblur-canvas": "^1.1.0",
     "three": "^0.73.0",
     "three.regular.helvetiker": "^1.0.0",
     "underscore": "^1.8.3"
