@@ -1,5 +1,7 @@
 // Imports 
 
+// TODO: Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
+// TODO: Can we remove the second 
 $ = require('jquery');
 _ = require('underscore');
 THREE = require('threejs-build');
@@ -8,6 +10,7 @@ helvetiker = require('three.regular.helvetiker');
 Spinner = require('spin');
 
 
+/* TODO: Make npm module for this??? */
 /* StackBlur - a fast almost Gaussian Blur For Canvas
 
 Version:    0.5
@@ -304,6 +307,7 @@ function stackBlurCanvasRGB( id, top_x, top_y, width, height, radius ) {
   
   context.putImageData( imageData, top_x, top_y ); }
 
+// TODO: Is there something I can use in the Three library for this or should I make it a module?
 THREE.Object3D.prototype.GdeepCloneMaterials = function() {
   var object = this.clone( new THREE.Object3D(), false );
 
@@ -319,6 +323,7 @@ THREE.Object3D.prototype.GdeepCloneMaterials = function() {
   }
   return object;};
 
+// TODO: Do I need this?
 THREE.Mesh.prototype.GdeepCloneMaterials = function( object, recursive ) {
   if ( object === undefined ) {
     object = new THREE.Mesh( this.geometry, this.material.clone() );
@@ -425,6 +430,7 @@ revealScene = function(event) {
 
 }
 
+//Q: CameraRoom.drawWalls()?
 draw = function(type,v,c,w,h) {
   
   if(v.paused || v.ended) return false;
@@ -637,6 +643,7 @@ initAudio = function() {
   } 
 };
 
+// TODO: This should be on app.scene prototype
 THREE.Scene.prototype.addLighting = function() { 
   a = []
 
@@ -667,6 +674,32 @@ initScene = function() {
   document.body.appendChild( app.renderer.domElement );
   app.scene.addLighting();
 };
+
+// TODO: Thinking about module refactoring
+// cameraroom = require('CameraRoom')
+//    Include Webcam logic?
+//    Build CameraCube?
+//    By requiring this, it would return the code needed to add the camera room to the site
+//    camera = require('camera')
+//      All of the code to initialize the webcam
+//    gaussianblur = require('gaussianblur?')
+//    emboss = require('emboss')
+//    blackandwhite = require('blackandwhite')
+// dots = require('Dots')
+//    Build dots?
+//    Each dot has a label that gets added to it
+//    Add event handlers
+// sounds = require('Sounds')
+//    Toggle audio controls
+//    Load sounds
+//    This would probably be included in the dots module
+// scene = require('Scene') ??? 
+//    The initialization of the webGL renderer, scene, controls, context? 
+// tumblr = require('Tumblr')
+//    Code pertaining to getting Tumblr stuff
+//    Tumblr.getPosts() no argument returns all posts
+//    Tumblr.getPosts('') empty string returns all posts with no tags
+//    Tumblr.getPosts('foo') would return all posts tagged with foo
 
 init = function() {    
 
