@@ -10,36 +10,6 @@ helvetiker = require('three.regular.helvetiker');
 Spinner = require('spin');
 StackBlur = require('stackblur-canvas');
 
-// TODO: Is there something I can use in the Three library for this or should I make it a module?
-THREE.Object3D.prototype.GdeepCloneMaterials = function() {
-  var object = this.clone( new THREE.Object3D(), false );
-
-  for ( var i = 0; i < this.children.length; i++ ) {
-
-    var child = this.children[ i ];
-    if ( child.GdeepCloneMaterials ) {
-      object.add( child.GdeepCloneMaterials() );
-    } else {
-      object.add( child.clone() );
-    }
-
-  }
-  return object;};
-
-// TODO: Do I need this?
-THREE.Mesh.prototype.GdeepCloneMaterials = function( object, recursive ) {
-  if ( object === undefined ) {
-    object = new THREE.Mesh( this.geometry, this.material.clone() );
-  }
-
-  THREE.Object3D.prototype.GdeepCloneMaterials.call( this, object, recursive );
-
-  return object;
-};
-
-/* END PLUGINS */
-
-
 /**
  * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
  * @return the blog panel populated with posts
