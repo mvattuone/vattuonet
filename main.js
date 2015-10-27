@@ -42,21 +42,6 @@ StackBlur = require('stackblur-canvas');
   return true;
 };
 
-
-/* Main Render Loop */
-render = function() {
-  app.af = requestAnimationFrame( render );
-
-  if (app.texture) {
-    app.texture.needsUpdate = true;
-  }
-
-  var delta = app.clock.getDelta();
-  app.camControls.update(delta);
-
-  app.renderer.render( app.scene, app.camera );
-};
-
 closePanel = function(event) {
   event.preventDefault();
   $('.current.panel').addClass('exit');
@@ -315,27 +300,41 @@ initAudio = function() {
   } 
 };
 
-// TODO: This should be on app.scene prototype
-THREE.Scene.prototype.addLighting = function() { 
-  a = []
+/* Main Render Loop */
+render = function() {
+  app.af = requestAnimationFrame( render );
 
-  var ambientLight = new THREE.AmbientLight( 0x000000 );
-  app.scene.add( ambientLight );
+  if (app.texture) {
+    app.texture.needsUpdate = true;
+  }
 
-  var lights = [];
-  for (i=0; i<3;i++) { lights[i] = new THREE.PointLight( 0xffffff, 1, 0 ); }
-  
-  lights[0].position.set( 0, 200, 0 );
-  lights[1].position.set( 100, 200, 100 );
-  lights[2].position.set( -100, -200, -100 );
+  var delta = app.clock.getDelta();
+  app.camControls.update(delta);
 
-  app.scene.add(lights[0]);
-  app.scene.add(lights[1]);
-  app.scene.add(lights[2]);
-}
+  app.renderer.render( app.scene, app.camera );
+};
 
 initScene = function() { 
   app.scene = new THREE.Scene();
+  // TODO: This should be on app.scene prototype
+  app.scene.addLighting = function() { 
+    a = []
+
+    var ambientLight = new THREE.AmbientLight( 0x000000 );
+    app.scene.add( ambientLight );
+
+    var lights = [];
+    for (i=0; i<3;i++) { lights[i] = new THREE.PointLight( 0xffffff, 1, 0 ); }
+    
+    lights[0].position.set( 0, 200, 0 );
+    lights[1].position.set( 100, 200, 100 );
+    lights[2].position.set( -100, -200, -100 );
+
+    app.scene.add(lights[0]);
+    app.scene.add(lights[1]);
+    app.scene.add(lights[2]);
+  }
+
   app.camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 100000);
   app.raycaster = new THREE.Raycaster(); // used with intersections
   app.mouse = new THREE.Vector3(); // used with intersections
