@@ -7,7 +7,6 @@ $ = require('jquery');
 _ = require('underscore');
 THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
-Spinner = require('spin');
 StackBlur = require('stackblur-canvas');
 
 // User made modules
