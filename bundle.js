@@ -12768,12 +12768,12 @@ helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 
 // User made modules
-var WebcamTexture = require('./webcam-texture');
 VattuonetControls = require('./controls')(THREE);
 Tumblr = require('./tumblr')
 
 closePanel = function(event) {
   event.preventDefault();
+  window.location.hash = "";
   $('.current.panel').addClass('exit');
 };
 
@@ -12840,7 +12840,11 @@ onDocumentMouseDown = function(event) {
   }
   else if (intersects[ 0 ].object.id === 14) {
     route = "about";
-  } 
+  } else {
+    route = "";
+  }
+
+  window.location.hash = route;
 
   $('.panel#' + route).addClass('current');
 
@@ -12919,12 +12923,19 @@ THREE.typeface_js.loadFace(helvetiker);
 createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
-  init();
+    init();
+
+    $('.panel' + window.location.hash).addClass('current');
+
+  
+
+
+
   window.blogTriggered = undefined; // Temporary fix
 });
 
 
-},{"./controls":7,"./scene":10,"./tumblr":11,"./webcam-texture":12,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
+},{"./controls":7,"./scene":10,"./tumblr":11,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
 // TODO: maybe make onLoad and onPlay methods for webcam?
 
 revealScene = function(event) { 
@@ -12974,8 +12985,8 @@ initScene = function() {
   CubeRoom = require('./cube-room');
   Webcam.create(successCallback);
 
-  canvas = WebcamTexture.initialize();
-  var room = CubeRoom.create(canvas);
+  texture = WebcamTexture.initialize();
+  var room = CubeRoom.create(texture);
 
   app.spheres = [];
   app.labels = [];
@@ -13068,8 +13079,6 @@ labelSphere = function(label) {
 
 successCallback = function(stream) {
   Webcam.output.onplay = function() {
-    cw = Webcam.output.clientWidth;
-    ch = Webcam.output.clientHeight;
     WebcamTexture.draw("greyScale",Webcam.output);
   };
 
@@ -13165,6 +13174,7 @@ var WebcamTexture = {
     this.ctx = this.canvas.getContext('2d');
 
     this.texture = new THREE.Texture(this.canvas);
+    this.texture.minFilter = THREE.LinearFilter;
     return this.texture;
   },
   transform: function(transformType, data, imageData) {

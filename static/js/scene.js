@@ -47,8 +47,8 @@ initScene = function() {
   CubeRoom = require('./cube-room');
   Webcam.create(successCallback);
 
-  canvas = WebcamTexture.initialize();
-  var room = CubeRoom.create(canvas);
+  texture = WebcamTexture.initialize();
+  var room = CubeRoom.create(texture);
 
   app.spheres = [];
   app.labels = [];
@@ -141,8 +141,6 @@ labelSphere = function(label) {
 
 successCallback = function(stream) {
   Webcam.output.onplay = function() {
-    cw = Webcam.output.clientWidth;
-    ch = Webcam.output.clientHeight;
     WebcamTexture.draw("greyScale",Webcam.output);
   };
 

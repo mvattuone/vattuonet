@@ -59,7 +59,7 @@ body, #container {
 }
 
 .panel.current.exit#contact {
-    transform: translateX(100%);
+    transform: translateX(-100%);
 }
 
 .panel.current.exit#blog { 
@@ -67,7 +67,7 @@ body, #container {
 }
 
 .panel.current.exit#projects {
-    transform: translateY(100%);
+    transform: translateY(-100%);
 }
 
 .panel#about {

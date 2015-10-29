@@ -9,12 +9,12 @@ helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 
 // User made modules
-var WebcamTexture = require('./webcam-texture');
 VattuonetControls = require('./controls')(THREE);
 Tumblr = require('./tumblr')
 
 closePanel = function(event) {
   event.preventDefault();
+  window.location.hash = "";
   $('.current.panel').addClass('exit');
 };
 
@@ -81,7 +81,11 @@ onDocumentMouseDown = function(event) {
   }
   else if (intersects[ 0 ].object.id === 14) {
     route = "about";
-  } 
+  } else {
+    route = "";
+  }
+
+  window.location.hash = route;
 
   $('.panel#' + route).addClass('current');
 
@@ -160,7 +164,14 @@ THREE.typeface_js.loadFace(helvetiker);
 createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
-  init();
+    init();
+
+    $('.panel' + window.location.hash).addClass('current');
+
+  
+
+
+
   window.blogTriggered = undefined; // Temporary fix
 });
 

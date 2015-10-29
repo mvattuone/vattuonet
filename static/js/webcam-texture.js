@@ -34,6 +34,7 @@ var WebcamTexture = {
     this.ctx = this.canvas.getContext('2d');
 
     this.texture = new THREE.Texture(this.canvas);
+    this.texture.minFilter = THREE.LinearFilter;
     return this.texture;
   },
   transform: function(transformType, data, imageData) {
