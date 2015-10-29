@@ -1,5 +1,7 @@
 'use strict';
 
+// Add all scripts to at least a /scripts/ dir so we can run watch against all files
+
 var browserify = require('browserify'),
     gulp = require('gulp'),
     source = require('vinyl-source-stream'),
@@ -11,20 +13,23 @@ var browserify = require('browserify'),
 gulp.task('javascript', function () {
   // set up the browserify instance on a task basis
   var b = browserify({
-    entries: './main.js',
+    entries: 'static/js/main.js',
     debug: true,
-  });
+  })
 
   return b.bundle()
+    .on('error', gutil.log)
     .pipe(source('bundle.js'))
+    .on('error', gutil.log)
     .pipe(buffer())
+    .on('error', gutil.log)
     .pipe(sourcemaps.init({loadMaps: true}))
-        // Add transformation tasks to the pipeline here.
-        .on('error', gutil.log)
+    .on('error', gutil.log)
     .pipe(sourcemaps.write('./'))
+    .on('error', gutil.log)
     .pipe(gulp.dest('.'));
 });
 
 gulp.task('watch', function() { 
-  gulp.watch(['./main.js'], ['javascript']);
+  gulp.watch(['static/js/*'], ['javascript']);
 });

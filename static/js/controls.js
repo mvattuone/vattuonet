@@ -95,7 +95,7 @@ module.exports = function(THREE) {
 
         // Load a app.sound file using an ArrayBuffer XMLHttpRequest.
         var request = new XMLHttpRequest();
-        request.open("GET", 'vattuonet-' + song + '.mp3', true);
+        request.open("GET", '/static/audio/vattuonet-' + song + '.mp3', true);
         request.responseType = "arraybuffer";
         request.onload = function(e) {
           // Create a buffer from the response ArrayBuffer.
