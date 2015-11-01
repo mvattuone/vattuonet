@@ -1,5 +1,3 @@
-// TODO: maybe make onLoad and onPlay methods for webcam?
-
 revealScene = function(event) { 
   app.spinner.stop();
   $('body').addClass('loaded');
@@ -14,7 +12,7 @@ buildSphere = function(radius,widthSegments,heightSegments) {
 
 initScene = function() { 
   app.scene = new THREE.Scene();
-  // TODO: This should be on app.scene prototype
+  
   app.scene.addLighting = function() { 
     a = []
 
@@ -42,20 +40,22 @@ initScene = function() {
   app.renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( app.renderer.domElement );
 
+  app.scene.addLighting();
+
   Webcam = require('./webcam');
   WebcamTexture = require('./webcam-texture');
   CubeRoom = require('./cube-room');
   Webcam.create(successCallback);
 
-  texture = WebcamTexture.initialize();
-  var room = CubeRoom.create(texture);
-
-  app.spheres = [];
-  app.labels = [];
-
-  app.scene.addLighting();
+  var texture = WebcamTexture.initialize(),
+      room = CubeRoom.create(texture);
 
   app.scene.add(room);
+
+  
+
+  app.spheres = [];
+  app.labels = []; 
 
   for (i=0; i<4; i++) {
     mesh = buildSphere(16,256,256);
@@ -87,6 +87,7 @@ initScene = function() {
     0xfadfae,
   ]
 
+  // TODO: is there a way to generalize this?
   app.spheres.map(function(sphere) {
     sphere.material.color.setHex(coolColors[Math.floor(Math.random()*coolColors.length)]);
     sphere.original_positionX = sphere.position.x;
@@ -102,8 +103,11 @@ initScene = function() {
 
 };
 
-
-/* Give a more human readable name to each sphere, using the Mesh ID provided upon building the mesh. */
+// Is there a better way to do this?
+// For each sphere that is created, assign a route to the UserData property
+// When there is an intersection, rather than looking at ids and creating routes,
+// we could probably just create a function that looks at the UserData property
+// and addClass that way.
 assignLabel = function(meshId) {
   var label;
   if (meshId === 8) {
@@ -151,6 +155,9 @@ successCallback = function(stream) {
 
   Webcam.output.load();
 };
+
+revealScene();
+
 
 module.exports = {
   create: initScene

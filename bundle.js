@@ -12757,57 +12757,34 @@ module.exports = {
     create: buildWebcamRoom,
 };
 },{}],9:[function(require,module,exports){
-// Imports 
-// TODO: Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
-// TODO: Can we remove the second 
+// HIGH LEVEL TODOS
+// * Think through + refactor panel code into panel.js
+// * Move Audio code into separate module
+// * Fix buggy contact/projects panels
+// * Fix scrolling on blog page so panel remains at same position
+// * Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
+// * Design panel pages
+// * Move app object creation to a script file
+// * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
+// * See if we can make the Controls object not require invocation...
+
+// Imports
 // NPM modules
 $ = require('jquery');
 _ = require('underscore');
 THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
-
+Spinner = require('spin.js');
+window.panel;
 // User made modules
+// TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
-Tumblr = require('./tumblr')
-
-closePanel = function(event) {
-  event.preventDefault();
-  window.location.hash = "";
-  $('.current.panel').addClass('exit');
-};
-
-/* TODO: Come up with a better name for what I'm trying to do here... */
-sanitizePanel = function(event) {
-  var panel = $('.panel.current.exit');
-  if (panel.length <= 0) { return false; };
-  render();
-  panel.removeClass('exit').removeClass('current');
-}
+Tumblr = require('./tumblr');
+Panel = require('./panel');
 
 createSpinner = function() {
-  Spinner = require('spin.js');
-  var opts = {
-    lines: 9 ,
-    length: 28,
-    width: 16,
-    radius: 42,
-    scale: 0.75,
-    corners: 1,
-    color: '#000',
-    opacity: 0.25,
-    rotate: 30,
-    direction: 1,
-    speed: 1,
-    trail: 60,
-    fps: 20,
-    zIndex: 2e9,
-    className: 'spinner',
-    top: '50%',
-    left: '50%',
-    shadow: false,
-    hwaccel: true,
-  }
+  var opts = {lines: 9 ,length: 28,width: 16,radius: 42,scale: 0.75,corners: 1,color: '#000',opacity: 0.25,rotate: 30,direction: 1,speed: 1,trail: 60,fps: 20,zIndex: 2e9,className: 'spinner',top: '50%',left: '50%',shadow: false,hwaccel: true }
   app.target = $('.spinner')[0];
   app.spinner = new Spinner(opts).spin(app.target);
 };
@@ -12825,79 +12802,50 @@ onDocumentMouseDown = function(event) {
   var intersects = app.camControls.getIntersection(event);
   if (!intersects) { return false; }
 
+  // Is there a better way to do this?
+  // For each sphere that is created, assign a route to the UserData property
+  // When there is an intersection, rather than looking at ids and creating routes,
+  // we could probably just create a function that looks at the UserData property
+  // and addClass that way.
   var route;
-  if (intersects[ 0 ].object.id === 8) {
-    route = "blog";
+
+  if (intersects[0].object.id === 8) {
+    var panel = new Panel('blog', Tumblr.getPosts);
     if (!blogTriggered) {
-      blogTriggered = Tumblr.getPosts();  
+      blogTriggered = true;
     }
   }
-  else if (intersects[ 0 ].object.id === 10) {
-    route = "contact";
+  else if (intersects[0].object.id === 10) {
+    var panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   }
-  else if (intersects[ 0 ].object.id === 12) {
-    route = "projects";
+  else if (intersects[0].object.id === 12) {
+    var panel = new Panel('projects', '<p>Here are some projects I have worked on. You can also check out my <a href="//github.com/mvattuone">Github</a> for more deets.</p><ul><li><a href="//floatmap.us">Float Map</a></li><li><a href="//grh.511contracosta.org">Contra Costa Guaranteed Ride Home Program</a></li><li><a href="//susannahconway.com">Susannah Conway</a></li><li><a href="//climatetruth.org">Climate Truth</a></li><li><a href="//oaklandveg.com">Oakland Veg</a></li><li><a href="//fogcutter-sf.com">Fogcutter</a></li><li><a href="//connectome.stanford.edu">Autism Connectome from the Wall Lab at Stanford University</a></li></ul>');
   }
-  else if (intersects[ 0 ].object.id === 14) {
-    route = "about";
+  else if (intersects[0].object.id === 14) {
+    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
   } else {
-    route = "";
+    return false;
   }
-
-  window.location.hash = route;
-
-  $('.panel#' + route).addClass('current');
-
-  cancelAnimationFrame(app.af);
 };  
-
-
-
-setUIEventHandlers = function() {
-  $('.panel-wrapper > a').on('click', closePanel);
-  $('.panel').on('transitionend', sanitizePanel);
-};
 
 initAudio = function() { 
   // Web Audio API stuff
   window.AudioContext = ( window.AudioContext || window.webkitAudioContext || null );
 
-  if (!AudioContext) { 
+  if (!AudioContext) {
     // fallback
-  } 
+  }
 };
 
 /* Main Render Loop */
-render = function() {
+render = app.render = function() {
   app.af = requestAnimationFrame( render );
   
-
   var delta = app.clock.getDelta();
   app.camControls.update(delta);
 
   app.renderer.render( app.scene, app.camera );
 };
-
-// TODO: Thinking about module refactoring
-// cameraroom = require('CameraRoom')
-//    Include Webcam logic?
-//    Build WebcamCube?
-//    By requiring this, it would return the code needed to add the camera room to the site
-//    camera = require('camera')
-//      All of the code to initialize the webcam
-//    emboss = require('emboss')
-//    blackandwhite = require('blackandwhite')
-// dots = require('Dots')
-//    Build dots?
-//    Each dot has a label that gets added to it
-//    Add event handlers
-// sounds = require('Sounds')
-//    Toggle audio controls
-//    Load sounds
-//    This would probably be included in the dots module
-// scene = require('Scene') ??? 
-//    The initialization of the webGL renderer, scene, controls, context? 
-
 
 init = function() {    
   initAudio();
@@ -12911,8 +12859,6 @@ init = function() {
   app.camControls.dampingFactor = 0.25;
   app.camControls.enableZoom = false;
 
-  setUIEventHandlers();
-
   $('#scene').on('mousedown', onDocumentMouseDown);
   $('#scene').on('touchstart', onDocumentTouchStart);
 
@@ -12923,21 +12869,91 @@ THREE.typeface_js.loadFace(helvetiker);
 createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
-    init();
+  window.blogTriggered = false; // Temporary fix
+  init();
 
-    $('.panel' + window.location.hash).addClass('current');
-
-  
-
-
-
-  window.blogTriggered = undefined; // Temporary fix
+  if (window.location.hash.substring(1).length > 0) {
+    var panel = new Panel(window.location.hash.substring(1));
+  }  
 });
 
 
-},{"./controls":7,"./scene":10,"./tumblr":11,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
-// TODO: maybe make onLoad and onPlay methods for webcam?
+},{"./controls":7,"./panel":10,"./scene":11,"./tumblr":12,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
+// TODO: Why is the down->up transition still kind of buggy
+// TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
+var Panel = function(name, content) {
+    this.name = name;
+    this.content = content;
+    this.container = '.container#panels';
+    this.$container = $(this.container);
+    
+    this.template = _.template(
+        $( "script#panelTemplate" ).html()
+    ); 
+                    
+    this.initialize = function(name) {
+        this.$container.append(this.template({
+            title: this.name,
+            content: this.content
+        }));
 
+        this.el = '.panel#' + this.name;
+        this.$el = $('.panel#' + this.name);
+        var $el = this.$el;
+
+        this.events();
+        this.render();
+    };
+
+    this.render = function(event) {
+        this.$el.addClass('current');
+        window.location.hash = this.name;
+        this.enter();
+        this.$el.removeClass('enter');
+        cancelAnimationFrame(app.af);
+        return true;
+    }
+
+    // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
+    this.destroy = function(event) {
+        var $el = $('.panel.current.exit');
+        if ($el.length <= 0) { return false; };
+        window.location.hash = "";
+        app.render();
+        $el.remove();
+        return $el;
+    };
+
+    this.enter = function(event) {
+        this.$el.addClass('enter');
+    }
+
+    this.exit = function(event) {
+        var $el = $('.panel.current');
+        $el.addClass('exit');
+    }
+
+    // create our Panel
+    this.initialize();
+}
+
+
+
+// Prevent dupe events by unbinding?
+// How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
+Panel.prototype.events = function() {
+    this.$el.find('button').unbind('click');
+    this.$el.unbind('transitionend');
+    this.$el.unbind('DOMNodeInserted');
+    
+    this.$el.bind('DOMNodeInserted', this.enter);
+    this.$el.find('button').on('click', this.exit);
+    this.$el.on('transitionend', this.destroy);
+}
+
+
+module.exports = Panel;
+},{}],11:[function(require,module,exports){
 revealScene = function(event) { 
   app.spinner.stop();
   $('body').addClass('loaded');
@@ -12952,7 +12968,7 @@ buildSphere = function(radius,widthSegments,heightSegments) {
 
 initScene = function() { 
   app.scene = new THREE.Scene();
-  // TODO: This should be on app.scene prototype
+  
   app.scene.addLighting = function() { 
     a = []
 
@@ -12980,20 +12996,22 @@ initScene = function() {
   app.renderer.setSize( window.innerWidth, window.innerHeight );
   document.body.appendChild( app.renderer.domElement );
 
+  app.scene.addLighting();
+
   Webcam = require('./webcam');
   WebcamTexture = require('./webcam-texture');
   CubeRoom = require('./cube-room');
   Webcam.create(successCallback);
 
-  texture = WebcamTexture.initialize();
-  var room = CubeRoom.create(texture);
-
-  app.spheres = [];
-  app.labels = [];
-
-  app.scene.addLighting();
+  var texture = WebcamTexture.initialize(),
+      room = CubeRoom.create(texture);
 
   app.scene.add(room);
+
+  
+
+  app.spheres = [];
+  app.labels = []; 
 
   for (i=0; i<4; i++) {
     mesh = buildSphere(16,256,256);
@@ -13025,6 +13043,7 @@ initScene = function() {
     0xfadfae,
   ]
 
+  // TODO: is there a way to generalize this?
   app.spheres.map(function(sphere) {
     sphere.material.color.setHex(coolColors[Math.floor(Math.random()*coolColors.length)]);
     sphere.original_positionX = sphere.position.x;
@@ -13040,8 +13059,11 @@ initScene = function() {
 
 };
 
-
-/* Give a more human readable name to each sphere, using the Mesh ID provided upon building the mesh. */
+// Is there a better way to do this?
+// For each sphere that is created, assign a route to the UserData property
+// When there is an intersection, rather than looking at ids and creating routes,
+// we could probably just create a function that looks at the UserData property
+// and addClass that way.
 assignLabel = function(meshId) {
   var label;
   if (meshId === 8) {
@@ -13090,10 +13112,13 @@ successCallback = function(stream) {
   Webcam.output.load();
 };
 
+revealScene();
+
+
 module.exports = {
   create: initScene
 }
-},{"./cube-room":8,"./webcam":13,"./webcam-texture":12}],11:[function(require,module,exports){
+},{"./cube-room":8,"./webcam":14,"./webcam-texture":13}],12:[function(require,module,exports){
 /**
  * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
  * @return the blog panel populated with posts
@@ -13137,7 +13162,7 @@ module.exports = {
 module.exports = {
     getPosts: getPosts,
 };
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 
 // TODO: Maybe there are better modules for this?
 greyScaleTransform = function(data) {
@@ -13239,12 +13264,13 @@ var WebcamTexture = {
 }
 
 module.exports = WebcamTexture;
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // TODO: Add better error handling
 
 var Webcam = function() {
   var self = this;
-  self.output = $('#video')[0];
+  
+  this.output = $('#video')[0];
 
   this.create = function(success, error) { 
     this.callback = success;
@@ -13257,6 +13283,7 @@ var Webcam = function() {
     }
   };
 
+  // Question: Since this is a callback we can't rely on Webcam function scope??
   this.success = function(stream) { 
     if (self.output.mozSrcObject !== undefined) {
       self.output.mozSrcObject = stream;
@@ -13267,6 +13294,7 @@ var Webcam = function() {
     self.callback();
   }
 
+  // Question: Since this is a callback we can't rely on Webcam function scope??
   this.error = function(error) {
     console.error('An error occurred: [CODE ' + error.code + ']');
   }

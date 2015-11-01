@@ -20,56 +20,22 @@
   </div>
 
 
-  <div id="container">
-    <div id="about" class="panel">
-      <div class="panel-wrapper">
-      <h2>About</h2>
-      <p>My name is Mike, and I do stuff on the Internet.</p>
-
-      <p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.
-      I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p>
-
-      <p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>
-      <a href="#">Close</a>
-      </div>
-    </div>
-
-    <div id="projects" class="panel">
-      <div class="panel-wrapper">
-      <h2>Projects</h2>
-      <p>Here are some projects I have worked on. You can also check out my <a href="//github.com/mvattuone">Github</a> for more deets.</p>
-      <ul>
-        <li><a href="//floatmap.us">Float Map</a></li>
-        <li><a href="//grh.511contracosta.org">Contra Costa Guaranteed Ride Home Program</a></li>
-        <li><a href="//susannahconway.com">Susannah Conway</a></li>
-        <li><a href="//climatetruth.org">Climate Truth</a></li>
-        <li><a href="//oaklandveg.com">Oakland Veg</a></li>
-        <li><a href="//fogcutter-sf.com">Fogcutter</a></li>
-        <li><a href="//connectome.stanford.edu">Autism Connectome from the Wall Lab at Stanford University</a></li>
-      </ul>
-      <a href="#">Close</a>
-      </div>
-    </div>
-
-    <div id="contact" class="panel">
-      <div class="panel-wrapper">
-      <h2>Contact</h2>
-      <p>Email me at mike@vattuo.net -- I'd be down to grab a coffee or something.</p>
-      <a href="#">Close</a>
-      </div>
-    </div>
-
-    <div id="blog" class="panel">
-      <div class="panel-wrapper">
-        <div class="posts">
-        </div>
-      <a href="#">Close</a>
-      </div>
-    </div>
+  <div class="container" id="panels"></div>
 
   <video id="video"></video>
   <script>var app = {};</script>
   <script src="/bundle.js"></script>
+  
+  <script type="text/template" id="panelTemplate">
+    <div id="<%= title %>" class="panel">
+      <div class="panel-wrapper">
+        <h2><%= title %></h2>
+        <%= content %>
+        <button>Close</button>
+      </div>
+    </div>
+  </script>
+
   <script type="text/template" id="postTemplate">
       <div class="post">
         <h2><%= title %></h2>

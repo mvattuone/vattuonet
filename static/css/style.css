@@ -47,10 +47,11 @@ body, #container {
     left: 0;
     position: absolute;
     z-index:6;
-    opacity:0; 
+    transition: transform 0.3s linear;
 }
 
-.panel.current.exit {
+.panel.current.exit,
+.panel.current.enter {
     transition: transform 0.3s linear;
 }
 
@@ -59,7 +60,7 @@ body, #container {
 }
 
 .panel.current.exit#contact {
-    transform: translateX(-100%);
+    transform: translateX(90%);
 }
 
 .panel.current.exit#blog { 
@@ -67,7 +68,7 @@ body, #container {
 }
 
 .panel.current.exit#projects {
-    transform: translateY(-100%);
+    transform: translateY(80%);
 }
 
 .panel#about {
@@ -76,7 +77,7 @@ body, #container {
 }
 
 .panel#contact {
-    transform: translateX(100%);
+    transform: translateX(90%);
     background-color: #38bca6;
 }
 
@@ -86,13 +87,8 @@ body, #container {
 }
 
 .panel#projects {
-    transform: translateY(100%);
+    transform: translateY(80%);
     background-color: #dbb724;
-}
-
-.panel.current { 
-    opacity:1;
-    transition: all 0.3s linear;
 }
 
 .panel#about.current {

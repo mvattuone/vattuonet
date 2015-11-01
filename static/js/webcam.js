@@ -2,7 +2,8 @@
 
 var Webcam = function() {
   var self = this;
-  self.output = $('#video')[0];
+  
+  this.output = $('#video')[0];
 
   this.create = function(success, error) { 
     this.callback = success;
@@ -15,6 +16,7 @@ var Webcam = function() {
     }
   };
 
+  // Question: Since this is a callback we can't rely on Webcam function scope??
   this.success = function(stream) { 
     if (self.output.mozSrcObject !== undefined) {
       self.output.mozSrcObject = stream;
@@ -25,6 +27,7 @@ var Webcam = function() {
     self.callback();
   }
 
+  // Question: Since this is a callback we can't rely on Webcam function scope??
   this.error = function(error) {
     console.error('An error occurred: [CODE ' + error.code + ']');
   }
