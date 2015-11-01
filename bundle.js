@@ -12679,16 +12679,16 @@ module.exports = function(THREE) {
             var song;
         } 
 
-        if (app.intersects[ 0 ].object.id === 8) {
+        if (app.intersects[ 0 ].name === "blog") {
           song = 1;
         }
-        else if (app.intersects[ 0 ].object.id === 10) {
+        else if (app.intersects[ 0 ].name === "projects") {
           song = 2;
         }
-        else if (app.intersects[ 0 ].object.id === 12) {
+        else if (app.intersects[ 0 ].name === "contact") {
           song = 3;
         }
-        else if (app.intersects[ 0 ].object.id === 14) {
+        else if (app.intersects[ 0 ].name === "about") {
           song = 4;
         } 
 
@@ -12848,6 +12848,8 @@ render = app.render = function() {
 };
 
 init = function() {    
+  app.pages = ['blog', 'contact', 'projects', 'about'];
+  
   initAudio();
 
   var Scene = require('./scene');
@@ -12959,10 +12961,11 @@ revealScene = function(event) {
   $('body').addClass('loaded');
 };
 
-buildSphere = function(radius,widthSegments,heightSegments) {
+buildSphere = function(radius,widthSegments,heightSegments,name) {
   var geometry = new THREE.SphereGeometry(radius,widthSegments,heightSegments);    
   var material = new THREE.MeshPhongMaterial();
   var sphere = new THREE.Mesh( geometry, material );
+  sphere.name = name;
   return sphere;
 };
 
@@ -13013,12 +13016,13 @@ initScene = function() {
   app.spheres = [];
   app.labels = []; 
 
-  for (i=0; i<4; i++) {
-    mesh = buildSphere(16,256,256);
+  var labels = app.pages;
+  for (i=0; i<labels.length; i++) {
+    mesh = buildSphere(16,256,256,labels[i]);
+    labelText = mesh.name;
     app.spheres.push(mesh);
-    var label = assignLabel(mesh.id),
-        text = labelSphere(label);
-    app.labels.push(text);
+    label = buildLabel(labelText);
+    app.labels.push(label);
   }
 
   app.spheres[0].position.set(-90, 0, 0);
@@ -13059,35 +13063,14 @@ initScene = function() {
 
 };
 
-// Is there a better way to do this?
-// For each sphere that is created, assign a route to the UserData property
-// When there is an intersection, rather than looking at ids and creating routes,
-// we could probably just create a function that looks at the UserData property
-// and addClass that way.
-assignLabel = function(meshId) {
-  var label;
-  if (meshId === 8) {
-    label = "blog";
-  } else if (meshId === 10) {
-    label = "contact";
-  } else if (meshId === 12) {
-    label = "projects";
-  } else if (meshId === 14) {
-    label = "about";
-  } else {
-    label = null;
-  }
-
-  return label;
-}
-
 // Create navigation label that goes above each sphere.
-labelSphere = function(label) {  
+buildLabel = function(labelText) {  
+
   var textMat = new THREE.MeshPhongMaterial({
     color: 0xdddddd
   })
 
-  var textGeo = new THREE.TextGeometry(label.toUpperCase(), {
+  var textGeo = new THREE.TextGeometry(labelText.toUpperCase(), {
     font: 'helvetiker',
     weight: 'normal',
     style: 'normal',
@@ -13095,8 +13078,7 @@ labelSphere = function(label) {
     height: '2',
   });
 
-  var textMesh = new THREE.Mesh(textGeo, textMat);
-  return textMesh;
+  return new THREE.Mesh(textGeo, textMat);
 }
 
 successCallback = function(stream) {

@@ -71,16 +71,16 @@ module.exports = function(THREE) {
             var song;
         } 
 
-        if (app.intersects[ 0 ].object.id === 8) {
+        if (app.intersects[ 0 ].name === "blog") {
           song = 1;
         }
-        else if (app.intersects[ 0 ].object.id === 10) {
+        else if (app.intersects[ 0 ].name === "projects") {
           song = 2;
         }
-        else if (app.intersects[ 0 ].object.id === 12) {
+        else if (app.intersects[ 0 ].name === "contact") {
           song = 3;
         }
-        else if (app.intersects[ 0 ].object.id === 14) {
+        else if (app.intersects[ 0 ].name === "about") {
           song = 4;
         } 
 

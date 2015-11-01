@@ -107,8 +107,10 @@ body, #container {
     transform: translateY(0);
 }
 
+/* Video MUST be position:absolute; to preserve full width scene */
 #video {
     visibility: hidden;
+    position:absolute;
 }
 
 .panel-wrapper {

@@ -89,6 +89,8 @@ render = app.render = function() {
 };
 
 init = function() {    
+  app.pages = ['blog', 'contact', 'projects', 'about'];
+  
   initAudio();
 
   var Scene = require('./scene');

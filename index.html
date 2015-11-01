@@ -25,6 +25,16 @@
   <video id="video"></video>
   <script>var app = {};</script>
   <script src="/bundle.js"></script>
+
+  <script type="text/template" id="projectTemplate">
+    <div id="<%= slug %>" class="project">
+      <img src="<%= image %>" />
+      <p class="project-description"><%= description %></p>
+      <ul class="project-tags">
+        <% _.each(tags, function() { %> <li> <%= this %> </li> <% }); %>
+      </ul>
+    </div>
+  </script>
   
   <script type="text/template" id="panelTemplate">
     <div id="<%= title %>" class="panel">
