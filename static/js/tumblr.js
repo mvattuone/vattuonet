@@ -21,20 +21,15 @@
     
   script.addEventListener('load', function(e) {
     var posts = window.tumblr_api_read.posts,
-    postTemplate = _.template(
-        $( "script#postTemplate" ).html()
-    );
-    posts.forEach(function(post) {
-      if (!post['tags']) {
-        $('.posts').append(postTemplate({
-          'title': post['regular-title'],
-          'body': post['regular-body']
-        }));
-      }
+        postTemplate = _.template(
+          $( "script#postTemplate" ).html()
+        );
+    
+    return postTemplate({
+      'title': post['regular-title'],
+      'body': post['regular-body']
     });
-  });
 
-  return true;
 };
 
 
