@@ -71,18 +71,13 @@ module.exports = function(THREE) {
             var song;
         } 
 
-        if (app.intersects[ 0 ].name === "blog") {
-          song = 1;
-        }
-        else if (app.intersects[ 0 ].name === "projects") {
-          song = 2;
-        }
-        else if (app.intersects[ 0 ].name === "contact") {
-          song = 3;
-        }
-        else if (app.intersects[ 0 ].name === "about") {
-          song = 4;
-        } 
+        var sphere = app.intersects[0].object.name;
+
+        if (sphere === "blog") { song = 1; }
+        else if (sphere === "projects") { song = 2; }
+        else if (sphere === "contact") { song = 3; }
+        else if (sphere === "about") { song = 4; }
+        else return false; 
 
         if (app.currentSong === song) {
           return false;
