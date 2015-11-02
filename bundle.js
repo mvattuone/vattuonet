@@ -12606,6 +12606,27 @@ f!==d.currentFrame&&(this.morphTargetInfluences[d.lastFrame]=0,this.morphTargetI
 }.call(this));
 
 },{}],7:[function(require,module,exports){
+
+Post = function(title,body) {
+  this.title = title;
+  this.body = body;
+
+  this.template = _.template($("script#postTemplate").html());
+
+  this.initialize = function() {
+    this.html = this.template({
+      title: this.title,
+      body: this.body
+    });
+    return this.html;
+  }
+
+  this.initialize();
+}
+
+
+module.exports = Post;
+},{}],8:[function(require,module,exports){
 /**
  * @author dmarcos / http://github.com/dmarcos
  * @author mvattuone  / http://github.com/mvattuone
@@ -12679,18 +12700,13 @@ module.exports = function(THREE) {
             var song;
         } 
 
-        if (app.intersects[ 0 ].name === "blog") {
-          song = 1;
-        }
-        else if (app.intersects[ 0 ].name === "projects") {
-          song = 2;
-        }
-        else if (app.intersects[ 0 ].name === "contact") {
-          song = 3;
-        }
-        else if (app.intersects[ 0 ].name === "about") {
-          song = 4;
-        } 
+        var sphere = app.intersects[0].object.name;
+
+        if (sphere === "blog") { song = 1; }
+        else if (sphere === "projects") { song = 2; }
+        else if (sphere === "contact") { song = 3; }
+        else if (sphere === "about") { song = 4; }
+        else return false; 
 
         if (app.currentSong === song) {
           return false;
@@ -12742,7 +12758,7 @@ module.exports = function(THREE) {
     return VattuonetControls;
 }
 
-},{}],8:[function(require,module,exports){
+},{}],9:[function(require,module,exports){
 buildWebcamRoom = function(texture) { 
   var room = new THREE.Mesh( 
       new THREE.BoxGeometry(100000,100000,100000,1,1,1, null, true), 
@@ -12756,14 +12772,11 @@ buildWebcamRoom = function(texture) {
 module.exports = {
     create: buildWebcamRoom,
 };
-},{}],9:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // HIGH LEVEL TODOS
-// * Think through + refactor panel code into panel.js
 // * Move Audio code into separate module
-// * Fix buggy contact/projects panels
 // * Fix scrolling on blog page so panel remains at same position
 // * Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
-// * Design panel pages
 // * Move app object creation to a script file
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
 // * See if we can make the Controls object not require invocation...
@@ -12782,7 +12795,7 @@ window.panel;
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
 Projects = require('./projects');
-Tumblr = require('./tumblr');
+Posts = require('./posts');
 Panel = require('./panel');
 
 createSpinner = function() {
@@ -12809,22 +12822,25 @@ onDocumentMouseDown = function(event) {
   // When there is an intersection, rather than looking at ids and creating routes,
   // we could probably just create a function that looks at the UserData property
   // and addClass that way.
-  var route;
-
-  if (intersects[0].object.id === 8) {
-    var panel = new Panel('blog', Tumblr.getPosts());
-    if (!blogTriggered) {
-      blogTriggered = true;
-    }
+  var sphere = intersects[0].object.name;
+  var panel;
+  
+  // TODO: Think through whether this is the right way to do async fetching
+  // See Posts.js
+  if (sphere === 'blog') {
+    posts = new Posts();
+    posts.fetch();
+    panel = new Panel('blog');
+    app.blogPanel = panel;
   }
-  else if (intersects[0].object.id === 10) {
-    var panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
+  else if (sphere === 'contact') {
+    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   }
-  else if (intersects[0].object.id === 12) {
-    var projects = new Projects,
-        panel = new Panel('projects', projects.fetch());
+  else if (sphere === 'projects') {
+    projects = new Projects();
+    panel = new Panel('projects', projects);
   }
-  else if (intersects[0].object.id === 14) {
+  else if (sphere === 'about') {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
   } else {
     return false;
@@ -12850,8 +12866,31 @@ render = app.render = function() {
   app.renderer.render( app.scene, app.camera );
 };
 
+checkRoute = function() {
+   var route = window.location.hash.substring(1);
+   if ( route === 'blog') {
+      posts = new Posts();
+      posts.fetch();
+      panel = new Panel('blog');
+      app.blogPanel = panel;
+  }
+  else if (route === 'contact') {
+    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
+  }
+  else if (route === 'projects') {
+    projects = new Projects();
+    panel = new Panel('projects', projects);
+  }
+  else if (route === 'about') {
+    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+  } else {
+    return false;
+  }
+}
+
 init = function() {    
-  app.pages = ['blog', 'contact', 'projects', 'about'];
+  
+  app.routes = ['blog', 'projects', 'contact', 'about'];
   
   initAudio();
 
@@ -12874,22 +12913,20 @@ THREE.typeface_js.loadFace(helvetiker);
 createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
-  window.blogTriggered = false; // Temporary fix
   init();
 
   if (window.location.hash.substring(1).length > 0) {
-    var projects = new Projects,
-        panel = new Panel(window.location.hash.substring(1), projects.fetch());
+    checkRoute(window.location.hash.substring(1));
   }  
 });
 
 
-},{"./controls":7,"./panel":10,"./projects":12,"./scene":13,"./tumblr":14,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
+},{"./controls":8,"./panel":11,"./posts":12,"./projects":14,"./scene":15,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],11:[function(require,module,exports){
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
     this.name = name;
-    this.content = content;
+    this.content = typeof content !== 'undefined' ? content.html : "";
     this.container = '.container#panels';
     this.$container = $(this.container);
     
@@ -12897,7 +12934,7 @@ var Panel = function(name, content) {
         $( "script#panelTemplate" ).html()
     ); 
                     
-    this.initialize = function(name) {
+    this.initialize = function(name,content) {
         this.$container.append(this.template({
             title: this.name,
             content: this.content
@@ -12959,7 +12996,57 @@ Panel.prototype.events = function() {
 
 
 module.exports = Panel;
-},{}],11:[function(require,module,exports){
+},{}],12:[function(require,module,exports){
+var Posts = function() {
+    var Post = require('./Post');
+
+    var self = this;
+
+    this.fetch = function() {
+        var self = this;
+
+        if (!self.data) {
+            var $tumblrAPI = $("<script />"),
+            tumblrAPI = $tumblrAPI[0];
+            tumblrAPI.src = 'http://vattuonet.tumblr.com/api/read/json';
+            document.head.appendChild(tumblrAPI);
+
+            $tumblrAPI.on('load', function(e) {
+                self.data = window.tumblr_api_read.posts;
+                self.dispatch(app.blogPanel);
+            });
+        }
+    };
+
+    this.dispatch = function(panel) {
+        var posts = [],
+            post,
+            i;
+
+        for (i=0; i<this.data.length; i++) {
+            var args = this.data[i];
+            if (!args.tags) {
+                post = new Post(args['regular-title'], args['regular-body']);
+                posts.push(post.html);
+            }
+        }
+        
+        var html = posts.join("");
+
+        if (panel) {
+            panel.$el.find('.panel-wrapper').append(html);
+        }
+
+        return html;
+    };
+
+    return this;
+
+};
+
+module.exports = Posts;
+
+},{"./Post":7}],13:[function(require,module,exports){
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Project = function(name, image, description, tags) {
@@ -12968,12 +13055,9 @@ var Project = function(name, image, description, tags) {
   this.description = description;
   this.tags = tags;
 
-
-  this.container = '.panel-wrapper';
-
   this.template = _.template(
     $( "script#projectTemplate" ).html()
-    ); 
+  ); 
 
   this.initialize = function(name, image, description, tags) {
     
@@ -12986,27 +13070,25 @@ var Project = function(name, image, description, tags) {
 
   };
 
-    // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
-    this.destroy = function(event) {
-      var $el = $('.project.current.exit');
-      if ($el.length <= 0) { return false; };
-      $el.remove();
-      return $el;
-    };
+  // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
+  this.destroy = function(event) {
+    var $el = $('.project.current.exit');
+    if ($el.length <= 0) { return false; };
+    $el.remove();
+    return $el;
+  };
 
-    this.enter = function(event) {
-      this.$el.addClass('enter');
-    }
-
-    this.exit = function(event) {
-      var $el = $('.project.active');
-      $el.addClass('exit');
-    }
-
-    this.initialize();
+  this.enter = function(event) {
+    this.$el.addClass('enter');
   }
 
+  this.exit = function(event) {
+    var $el = $('.project.active');
+    $el.addClass('exit');
+  }
 
+  this.initialize();
+}
 
 // Prevent dupe events by unbinding?
 // How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
@@ -13020,9 +13102,8 @@ Project.prototype.events = function() {
   this.$el.on('transitionend', this.destroy);
 }
 
-
 module.exports = Project;
-},{}],12:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 /**
  * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
  * @return the blog panel populated with posts
@@ -13078,23 +13159,30 @@ Projects = function() {
       }
   ];
 
-  this.fetch = function(projects) {
+  this.fetch = function() {
+    var html = this.dispatch();
+    return html;
+  }
+
+  this.dispatch = function(projects) {
     var projects = [];
     for (i=0; i<this.data.length; i++) {
       var args = this.data[i];
       var project = new Project(args['name'], args['image'], args['description'], args['tags']);
       projects.push(project.html);
     }
-    var projectHTML = projects.join(",");
-    console.log(projectHTML);
-    return projectHTML;
+    var html = projects.join("");
+
+    return html;
   };
+
+  this.html = this.fetch()
+  return this;
   
 };
 
-
 module.exports = Projects;
-},{"./project":11}],13:[function(require,module,exports){
+},{"./project":13}],15:[function(require,module,exports){
 revealScene = function(event) { 
   app.spinner.stop();
   $('body').addClass('loaded');
@@ -13155,7 +13243,7 @@ initScene = function() {
   app.spheres = [];
   app.labels = []; 
 
-  var labels = app.pages;
+  var labels = app.routes;
   for (i=0; i<labels.length; i++) {
     mesh = buildSphere(16,256,256,labels[i]);
     labelText = mesh.name;
@@ -13239,51 +13327,7 @@ revealScene();
 module.exports = {
   create: initScene
 }
-},{"./cube-room":8,"./webcam":16,"./webcam-texture":15}],14:[function(require,module,exports){
-/**
- * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
- * @return the blog panel populated with posts
- */
-
-// tumblr = require('Tumblr')
-//    Code pertaining to getting Tumblr stuff
-//    Tumblr.getPosts() no argument returns all posts
-//    Tumblr.getPosts('') empty string returns all posts with no tags
-//    Tumblr.getPosts('foo') would return all posts tagged with foo
-
-
- getPosts = function() {
-  
-  /* Tumblr API failwhale */
-  var blogPanel = $('#blog.panel'),
-      script = document.createElement('script');
-
-  script.src = 'http://vattuonet.tumblr.com/api/read/json';
-  document.head.appendChild(script);
-    
-  script.addEventListener('load', function(e) {
-    var posts = window.tumblr_api_read.posts,
-    postTemplate = _.template(
-        $( "script#postTemplate" ).html()
-    );
-    posts.forEach(function(post) {
-      if (!post['tags']) {
-        $('.posts').append(postTemplate({
-          'title': post['regular-title'],
-          'body': post['regular-body']
-        }));
-      }
-    });
-  });
-
-  return true;
-};
-
-
-module.exports = {
-    getPosts: getPosts,
-};
-},{}],15:[function(require,module,exports){
+},{"./cube-room":9,"./webcam":17,"./webcam-texture":16}],16:[function(require,module,exports){
 
 // TODO: Maybe there are better modules for this?
 greyScaleTransform = function(data) {
@@ -13385,7 +13429,7 @@ var WebcamTexture = {
 }
 
 module.exports = WebcamTexture;
-},{}],16:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // TODO: Add better error handling
 
 var Webcam = function() {
@@ -13427,7 +13471,7 @@ module.exports = new Webcam;
 
 
 
-},{}]},{},[9])
+},{}]},{},[10])
 
 
 //# sourceMappingURL=bundle.js.map
