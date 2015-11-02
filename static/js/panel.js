@@ -40,6 +40,8 @@ var Panel = function(name, content) {
         window.location.hash = "";
         app.render();
         $el.remove();
+        $('#scene').on('mousedown', app.onDocumentMouseDown);
+        $('#scene').on('touchstart', app.onDocumentTouchStart);
         return $el;
     };
 

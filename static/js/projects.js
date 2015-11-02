@@ -17,39 +17,45 @@ Projects = function() {
   this.data = [
       {
           'name': 'Float Map',
+          'url': 'http://floatmap.us',
           'image': 'static/projects/floatmap.png',
           'description': 'Map that visualizes forecasted changes in extreme weather in the Midwest US. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition',
-          'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3']
+          'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3', 'Grunt']
       },
       {
           'name': '511CC Guaranteed Ride Home',
+          'url': 'http://grh.511contracosta.org',
           'image': 'static/projects/grh.png',
-          'description': 'Overhauled the West Contra Costa County Guaranteed Ride Home Program, replacing a set of Google Forms with a Django/Backbone SPA, featuring authentication and automatic email notifications upon reimbursement submission.',
-          'tags': ['Django', 'BackboneJS', 'RequireJS']
+          'description': 'Worked with the fine folks of <a href=“http://blinktag.com/”>BlinkTag</a> to assist <a href=“http://511cc.org”>511 Contra Costa</a> and the <a href=“http://wcctac.org/”>West Contra Costa Transportation Advisory Committee</a> in improving the technology behind their Guaranteed Ride Home program. Working closely with a program manager, I replaced a set of Google Forms and Spreadsheets with a SPA to more easily manage and sort member registrations and reimbursement submissions.',
+          'tags': ['Django', 'BackboneJS', 'RequireJS', 'Grunt']
       },
       {
           'name': 'Climate Truth',
+          'url': 'http://climatetruth.org',
           'image': 'static/projects/ct.png',
-          'description': 'Integrated HTML/CSS/JS for ClimateTruth.org into a Django project, utilizing a mix of Postgres and Memcached to render content acquired from an external REST API.',
-          'tags': ['Django', 'Actionkit', 'Postgres', 'Memcached']
+          'description': 'Integrated HTML/CSS/JS for ClimateTruth.org into a Django project, utilizing a mix of Postgres and Memcached to render and persist content acquired from the Actionkit CRM.',
+          'tags': ['Django', 'Actionkit', 'Postgres', 'Memcached', 'Grunt']
       },
       {
           'name': 'Susannah Conway',
+          'url': 'http://susannahconway.com',
           'image': 'static/projects/sc.png',
-          'description': 'Worked closely with client and a designer to recreate a series of mockups and interactive elements for a lifestyle blogger',
-          'tags': ['Wordpress', 'Roots.io', 'SCSS', 'jQuery']
+          'description': 'Worked closely with a <a href="http://chelseydyer.com/">designer</a> to develop a set of mockups and interactive elements into a custom Wordpress theme for a successful online blog. This project was noteworthy in that it was my first attempt at utilizing the <a href="https://roots.io/sage/">Sage Starter Theme</a> for Wordpress -- I would highly recommend giving it a spin.',
+          'tags': ['Wordpress', 'SCSS', 'jQuery', 'Gulp']
       },
       {
           'name': 'Connectome',
+          'url': 'http://connectome.stanford.edu',
           'image': 'static/projects/connectome.png',
-          'description': 'The Connectome is an interactive visualization tool that allows users to explore the autism research network.',
-          'tags': ['jQuery', 'D3']
+          'description': 'I helped develop an interactive visualization tool that displays collaborations within the autism research network',
+          'tags': ['jQuery', 'D3', 'Parse']
       },
       {
-          'name': 'Climate Relief Fund',
+          'name': 'Climate Relief',
+          'url': 'https://act.climaterelief.org/donate/donate_CAdrought/',
           'image': 'static/projects/crf.png',
-          'description': 'Build a reusable ATM-style donation page type to work in conjunction with the Actionkit CRM.',
-          'tags': ['Django', 'jQuery', 'Actionkit']
+          'description': 'I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
+          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit']
       }
   ];
 
@@ -62,7 +68,7 @@ Projects = function() {
     var projects = [];
     for (i=0; i<this.data.length; i++) {
       var args = this.data[i];
-      var project = new Project(args['name'], args['image'], args['description'], args['tags']);
+      var project = new Project(args['name'], args['url'], args['image'], args['description'], args['tags']);
       projects.push(project.html);
     }
     var html = projects.join("");

@@ -27,9 +27,9 @@ module.exports = function(THREE) {
             y: 0,
         };
 
-        document.addEventListener('mousemove', scope.onMouseMove, false );
+        $('#scene').mousemove(scope.onMouseMove);
         // We use debounce to ensure songs are only triggered once (i.e. when there is an intersection)
-        document.addEventListener('mousemove', _.debounce(function(event) { scope.checkPosition(event) }, 200), false );
+        $('#scene').mousemove(_.debounce(function(event) { scope.checkPosition(event) }, 200));
 
         return scope;
       };
@@ -37,8 +37,8 @@ module.exports = function(THREE) {
       this.onMouseMove = function ( event ) {
           if ( app.camControls.enabled === false ) return;
 
-          var movementX = event.movementX || 0,
-              movementY = event.movementY || 0;
+          var movementX = event.originalEvent.movementX || 0,
+              movementY = event.originalEvent.movementY || 0;
 
           app.camControls.orientation.y -= movementX * 0.0025;
           app.camControls.orientation.x -= movementY * 0.0025;
@@ -58,7 +58,7 @@ module.exports = function(THREE) {
       };
 
       this.checkPosition = function(event) {
-        app.intersects = app.camControls.getIntersection(event);
+        app.intersects = app.camControls.getIntersection(event.originalEvent);
 
         if (!app.intersects) { 
           if (app.sound) { app.sound.source.stop(); }

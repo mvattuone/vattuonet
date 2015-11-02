@@ -1,7 +1,8 @@
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
-var Project = function(name, image, description, tags) {
+var Project = function(name, url, image, description, tags) {
   this.name = name;
+  this.url  = url;
   this.image = image;
   this.description = description;
   this.tags = tags;
@@ -10,10 +11,11 @@ var Project = function(name, image, description, tags) {
     $( "script#projectTemplate" ).html()
   ); 
 
-  this.initialize = function(name, image, description, tags) {
+  this.initialize = function() {
     
     this.html = this.template({
       name: this.name,
+      url: this.url,
       image: this.image,
       description: this.description,
       tags: this.tags
