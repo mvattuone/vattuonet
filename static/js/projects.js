@@ -60,8 +60,7 @@ Projects = function() {
       var project = new Project(args['name'], args['image'], args['description'], args['tags']);
       projects.push(project.html);
     }
-    var projectHTML = projects.join(",");
-    console.log(projectHTML);
+    var projectHTML = projects.join("");
     return projectHTML;
   };
   

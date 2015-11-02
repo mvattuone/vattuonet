@@ -121,6 +121,7 @@ p, span, li {
 
 .panel-title {
     float:left;
+    margin-top:0;
 }
 
 .panel .close {
