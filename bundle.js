@@ -12776,10 +12776,12 @@ THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 Spinner = require('spin.js');
+// TODO: We don't want this.
 window.panel;
 // User made modules
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
+Projects = require('./projects');
 Tumblr = require('./tumblr');
 Panel = require('./panel');
 
@@ -12810,7 +12812,7 @@ onDocumentMouseDown = function(event) {
   var route;
 
   if (intersects[0].object.id === 8) {
-    var panel = new Panel('blog', Tumblr.getPosts);
+    var panel = new Panel('blog', Tumblr.getPosts());
     if (!blogTriggered) {
       blogTriggered = true;
     }
@@ -12819,7 +12821,8 @@ onDocumentMouseDown = function(event) {
     var panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   }
   else if (intersects[0].object.id === 12) {
-    var panel = new Panel('projects', '<p>Here are some projects I have worked on. You can also check out my <a href="//github.com/mvattuone">Github</a> for more deets.</p><ul><li><a href="//floatmap.us">Float Map</a></li><li><a href="//grh.511contracosta.org">Contra Costa Guaranteed Ride Home Program</a></li><li><a href="//susannahconway.com">Susannah Conway</a></li><li><a href="//climatetruth.org">Climate Truth</a></li><li><a href="//oaklandveg.com">Oakland Veg</a></li><li><a href="//fogcutter-sf.com">Fogcutter</a></li><li><a href="//connectome.stanford.edu">Autism Connectome from the Wall Lab at Stanford University</a></li></ul>');
+    var projects = new Projects,
+        panel = new Panel('projects', projects.fetch());
   }
   else if (intersects[0].object.id === 14) {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
@@ -12875,12 +12878,13 @@ $(document).ready(function() {
   init();
 
   if (window.location.hash.substring(1).length > 0) {
-    var panel = new Panel(window.location.hash.substring(1));
+    var projects = new Projects,
+        panel = new Panel(window.location.hash.substring(1), projects.fetch());
   }  
 });
 
 
-},{"./controls":7,"./panel":10,"./scene":11,"./tumblr":12,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
+},{"./controls":7,"./panel":10,"./projects":12,"./scene":13,"./tumblr":14,"jquery":1,"spin.js":2,"stackblur-canvas":3,"three.regular.helvetiker":4,"threejs-build":5,"underscore":6}],10:[function(require,module,exports){
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
@@ -12949,13 +12953,148 @@ Panel.prototype.events = function() {
     this.$el.unbind('DOMNodeInserted');
     
     this.$el.bind('DOMNodeInserted', this.enter);
-    this.$el.find('button').on('click', this.exit);
+    this.$el.find('.close').on('click', this.exit);
     this.$el.on('transitionend', this.destroy);
 }
 
 
 module.exports = Panel;
 },{}],11:[function(require,module,exports){
+// TODO: Why is the down->up transition still kind of buggy
+// TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
+var Project = function(name, image, description, tags) {
+  this.name = name;
+  this.image = image;
+  this.description = description;
+  this.tags = tags;
+
+
+  this.container = '.panel-wrapper';
+
+  this.template = _.template(
+    $( "script#projectTemplate" ).html()
+    ); 
+
+  this.initialize = function(name, image, description, tags) {
+    
+    this.html = this.template({
+      name: this.name,
+      image: this.image,
+      description: this.description,
+      tags: this.tags
+    });
+
+  };
+
+    // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
+    this.destroy = function(event) {
+      var $el = $('.project.current.exit');
+      if ($el.length <= 0) { return false; };
+      $el.remove();
+      return $el;
+    };
+
+    this.enter = function(event) {
+      this.$el.addClass('enter');
+    }
+
+    this.exit = function(event) {
+      var $el = $('.project.active');
+      $el.addClass('exit');
+    }
+
+    this.initialize();
+  }
+
+
+
+// Prevent dupe events by unbinding?
+// How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
+Project.prototype.events = function() {
+  this.$el.find('button').unbind('click');
+  this.$el.unbind('transitionend');
+  this.$el.unbind('DOMNodeInserted');
+
+  this.$el.bind('DOMNodeInserted', this.enter);
+  this.$el.find('button').on('click', this.exit);
+  this.$el.on('transitionend', this.destroy);
+}
+
+
+module.exports = Project;
+},{}],12:[function(require,module,exports){
+/**
+ * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
+ * @return the blog panel populated with posts
+ */
+
+//    Projects = require('projects')
+//    Code pertaining to getting Tumblr stuff
+//    Tumblr.getPosts() no argument returns all posts
+//    Tumblr.getPosts('') empty string returns all posts with no tags
+//    Tumblr.getPosts('foo') would return all posts tagged with foo
+
+
+Project = require('./project');
+
+Projects = function() {
+
+  this.data = [
+      {
+          'name': 'Float Map',
+          'image': 'static/projects/floatmap.png',
+          'description': 'Map that visualizes forecasted changes in extreme weather in the Midwest US. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition',
+          'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3']
+      },
+      {
+          'name': '511CC Guaranteed Ride Home',
+          'image': 'static/projects/grh.png',
+          'description': 'Overhauled the West Contra Costa County Guaranteed Ride Home Program, replacing a set of Google Forms with a Django/Backbone SPA, featuring authentication and automatic email notifications upon reimbursement submission.',
+          'tags': ['Django', 'BackboneJS', 'RequireJS']
+      },
+      {
+          'name': 'Climate Truth',
+          'image': 'static/projects/ct.png',
+          'description': 'Integrated HTML/CSS/JS for ClimateTruth.org into a Django project, utilizing a mix of Postgres and Memcached to render content acquired from an external REST API.',
+          'tags': ['Django', 'Actionkit', 'Postgres', 'Memcached']
+      },
+      {
+          'name': 'Susannah Conway',
+          'image': 'static/projects/sc.png',
+          'description': 'Worked closely with client and a designer to recreate a series of mockups and interactive elements for a lifestyle blogger',
+          'tags': ['Wordpress', 'Roots.io', 'SCSS', 'jQuery']
+      },
+      {
+          'name': 'Connectome',
+          'image': 'static/projects/connectome.png',
+          'description': 'The Connectome is an interactive visualization tool that allows users to explore the autism research network.',
+          'tags': ['jQuery', 'D3']
+      },
+      {
+          'name': 'Climate Relief Fund',
+          'image': 'static/projects/crf.png',
+          'description': 'Build a reusable ATM-style donation page type to work in conjunction with the Actionkit CRM.',
+          'tags': ['Django', 'jQuery', 'Actionkit']
+      }
+  ];
+
+  this.fetch = function(projects) {
+    var projects = [];
+    for (i=0; i<this.data.length; i++) {
+      var args = this.data[i];
+      var project = new Project(args['name'], args['image'], args['description'], args['tags']);
+      projects.push(project.html);
+    }
+    var projectHTML = projects.join(",");
+    console.log(projectHTML);
+    return projectHTML;
+  };
+  
+};
+
+
+module.exports = Projects;
+},{"./project":11}],13:[function(require,module,exports){
 revealScene = function(event) { 
   app.spinner.stop();
   $('body').addClass('loaded');
@@ -13100,7 +13239,7 @@ revealScene();
 module.exports = {
   create: initScene
 }
-},{"./cube-room":8,"./webcam":14,"./webcam-texture":13}],12:[function(require,module,exports){
+},{"./cube-room":8,"./webcam":16,"./webcam-texture":15}],14:[function(require,module,exports){
 /**
  * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
  * @return the blog panel populated with posts
@@ -13144,7 +13283,7 @@ module.exports = {
 module.exports = {
     getPosts: getPosts,
 };
-},{}],13:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 
 // TODO: Maybe there are better modules for this?
 greyScaleTransform = function(data) {
@@ -13246,7 +13385,7 @@ var WebcamTexture = {
 }
 
 module.exports = WebcamTexture;
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 // TODO: Add better error handling
 
 var Webcam = function() {

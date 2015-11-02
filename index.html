@@ -27,21 +27,33 @@
   <script src="/bundle.js"></script>
 
   <script type="text/template" id="projectTemplate">
-    <div id="<%= slug %>" class="project">
-      <img src="<%= image %>" />
-      <p class="project-description"><%= description %></p>
-      <ul class="project-tags">
-        <% _.each(tags, function() { %> <li> <%= this %> </li> <% }); %>
-      </ul>
+    <div class="project">
+      <div class="project-image">
+        <img src="<%= image %>" />
+      </div>
+      <div class="project-info">
+        <h3><%= name %></h3>
+        <div class="project-description">
+          <p><%= description %></p>
+        </div>
+        <p>Built with the help of:</p>
+        <div class="tags">
+          <ul>
+            <% _.each(tags, function(tag) { %> <li class="tag"> <%= tag %> </li> <% }); %>
+          </ul>
+        </div>
+      </div>
     </div>
   </script>
   
   <script type="text/template" id="panelTemplate">
     <div id="<%= title %>" class="panel">
       <div class="panel-wrapper">
-        <h2><%= title %></h2>
-        <%= content %>
-        <button>Close</button>
+        <h2 class="panel-title"><%= title %></h2>
+        <span class="close">×</span>
+        <div class="panel-content">
+          <%= content %>
+        </div>
       </div>
     </div>
   </script>

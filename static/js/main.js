@@ -17,10 +17,12 @@ THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 Spinner = require('spin.js');
+// TODO: We don't want this.
 window.panel;
 // User made modules
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
+Projects = require('./projects');
 Tumblr = require('./tumblr');
 Panel = require('./panel');
 
@@ -51,7 +53,7 @@ onDocumentMouseDown = function(event) {
   var route;
 
   if (intersects[0].object.id === 8) {
-    var panel = new Panel('blog', Tumblr.getPosts);
+    var panel = new Panel('blog', Tumblr.getPosts());
     if (!blogTriggered) {
       blogTriggered = true;
     }
@@ -60,7 +62,8 @@ onDocumentMouseDown = function(event) {
     var panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   }
   else if (intersects[0].object.id === 12) {
-    var panel = new Panel('projects', '<p>Here are some projects I have worked on. You can also check out my <a href="//github.com/mvattuone">Github</a> for more deets.</p><ul><li><a href="//floatmap.us">Float Map</a></li><li><a href="//grh.511contracosta.org">Contra Costa Guaranteed Ride Home Program</a></li><li><a href="//susannahconway.com">Susannah Conway</a></li><li><a href="//climatetruth.org">Climate Truth</a></li><li><a href="//oaklandveg.com">Oakland Veg</a></li><li><a href="//fogcutter-sf.com">Fogcutter</a></li><li><a href="//connectome.stanford.edu">Autism Connectome from the Wall Lab at Stanford University</a></li></ul>');
+    var projects = new Projects,
+        panel = new Panel('projects', projects.fetch());
   }
   else if (intersects[0].object.id === 14) {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
@@ -116,7 +119,8 @@ $(document).ready(function() {
   init();
 
   if (window.location.hash.substring(1).length > 0) {
-    var panel = new Panel(window.location.hash.substring(1));
+    var projects = new Projects,
+        panel = new Panel(window.location.hash.substring(1), projects.fetch());
   }  
 });
 

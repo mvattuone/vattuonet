@@ -66,7 +66,7 @@ Panel.prototype.events = function() {
     this.$el.unbind('DOMNodeInserted');
     
     this.$el.bind('DOMNodeInserted', this.enter);
-    this.$el.find('button').on('click', this.exit);
+    this.$el.find('.close').on('click', this.exit);
     this.$el.on('transitionend', this.destroy);
 }
 
