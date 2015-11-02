@@ -163,6 +163,10 @@ p, span, li {
     overflow:scroll;
 }
 
+.panel-title {
+    text-transform:capitalize;
+}
+
 .project {
     margin:20px 0;
 }
@@ -179,7 +183,11 @@ p, span, li {
     margin-left:2%;
 }
 
-.project-info h3 { margin-top:0; }
+.project-name {
+    margin-top:0;
+    font-weight: normal;
+    text-transform: uppercase;
+}
 
 .tags ul {
   list-style: none;
