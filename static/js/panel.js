@@ -2,7 +2,7 @@
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
     this.name = name;
-    this.content = content;
+    this.content = typeof content !== 'undefined' ? content.html : "";
     this.container = '.container#panels';
     this.$container = $(this.container);
     
@@ -10,7 +10,7 @@ var Panel = function(name, content) {
         $( "script#panelTemplate" ).html()
     ); 
                     
-    this.initialize = function(name) {
+    this.initialize = function(name,content) {
         this.$container.append(this.template({
             title: this.name,
             content: this.content

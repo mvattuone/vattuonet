@@ -53,18 +53,26 @@ Projects = function() {
       }
   ];
 
-  this.fetch = function(projects) {
+  this.fetch = function() {
+    var html = this.dispatch();
+    return html;
+  }
+
+  this.dispatch = function(projects) {
     var projects = [];
     for (i=0; i<this.data.length; i++) {
       var args = this.data[i];
       var project = new Project(args['name'], args['image'], args['description'], args['tags']);
       projects.push(project.html);
     }
-    var projectHTML = projects.join("");
-    return projectHTML;
+    var html = projects.join("");
+
+    return html;
   };
+
+  this.html = this.fetch()
+  return this;
   
 };
-
 
 module.exports = Projects;

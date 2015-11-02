@@ -1,10 +1,7 @@
 // HIGH LEVEL TODOS
-// * Think through + refactor panel code into panel.js
 // * Move Audio code into separate module
-// * Fix buggy contact/projects panels
 // * Fix scrolling on blog page so panel remains at same position
 // * Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
-// * Design panel pages
 // * Move app object creation to a script file
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
 // * See if we can make the Controls object not require invocation...
@@ -23,7 +20,7 @@ window.panel;
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
 Projects = require('./projects');
-Tumblr = require('./tumblr');
+Posts = require('./posts');
 Panel = require('./panel');
 
 createSpinner = function() {
@@ -50,22 +47,25 @@ onDocumentMouseDown = function(event) {
   // When there is an intersection, rather than looking at ids and creating routes,
   // we could probably just create a function that looks at the UserData property
   // and addClass that way.
-  var route;
-
-  if (intersects[0].object.id === 8) {
-    var panel = new Panel('blog', Tumblr.getPosts());
-    if (!blogTriggered) {
-      blogTriggered = true;
-    }
+  var sphere = intersects[0].object.name;
+  var panel;
+  
+  // TODO: Think through whether this is the right way to do async fetching
+  // See Posts.js
+  if (sphere === 'blog') {
+    posts = new Posts();
+    posts.fetch();
+    panel = new Panel('blog');
+    app.blogPanel = panel;
   }
-  else if (intersects[0].object.id === 10) {
-    var panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
+  else if (sphere === 'contact') {
+    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   }
-  else if (intersects[0].object.id === 12) {
-    var projects = new Projects,
-        panel = new Panel('projects', projects.fetch());
+  else if (sphere === 'projects') {
+    projects = new Projects();
+    panel = new Panel('projects', projects);
   }
-  else if (intersects[0].object.id === 14) {
+  else if (sphere === 'about') {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
   } else {
     return false;
@@ -91,8 +91,31 @@ render = app.render = function() {
   app.renderer.render( app.scene, app.camera );
 };
 
+checkRoute = function() {
+   var route = window.location.hash.substring(1);
+   if ( route === 'blog') {
+      posts = new Posts();
+      posts.fetch();
+      panel = new Panel('blog');
+      app.blogPanel = panel;
+  }
+  else if (route === 'contact') {
+    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
+  }
+  else if (route === 'projects') {
+    projects = new Projects();
+    panel = new Panel('projects', projects);
+  }
+  else if (route === 'about') {
+    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+  } else {
+    return false;
+  }
+}
+
 init = function() {    
-  app.pages = ['blog', 'contact', 'projects', 'about'];
+  
+  app.routes = ['blog', 'projects', 'contact', 'about'];
   
   initAudio();
 
@@ -115,12 +138,10 @@ THREE.typeface_js.loadFace(helvetiker);
 createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
-  window.blogTriggered = false; // Temporary fix
   init();
 
   if (window.location.hash.substring(1).length > 0) {
-    var projects = new Projects,
-        panel = new Panel(window.location.hash.substring(1), projects.fetch());
+    checkRoute(window.location.hash.substring(1));
   }  
 });
 

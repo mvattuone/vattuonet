@@ -6,12 +6,9 @@ var Project = function(name, image, description, tags) {
   this.description = description;
   this.tags = tags;
 
-
-  this.container = '.panel-wrapper';
-
   this.template = _.template(
     $( "script#projectTemplate" ).html()
-    ); 
+  ); 
 
   this.initialize = function(name, image, description, tags) {
     
@@ -24,27 +21,25 @@ var Project = function(name, image, description, tags) {
 
   };
 
-    // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
-    this.destroy = function(event) {
-      var $el = $('.project.current.exit');
-      if ($el.length <= 0) { return false; };
-      $el.remove();
-      return $el;
-    };
+  // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
+  this.destroy = function(event) {
+    var $el = $('.project.current.exit');
+    if ($el.length <= 0) { return false; };
+    $el.remove();
+    return $el;
+  };
 
-    this.enter = function(event) {
-      this.$el.addClass('enter');
-    }
-
-    this.exit = function(event) {
-      var $el = $('.project.active');
-      $el.addClass('exit');
-    }
-
-    this.initialize();
+  this.enter = function(event) {
+    this.$el.addClass('enter');
   }
 
+  this.exit = function(event) {
+    var $el = $('.project.active');
+    $el.addClass('exit');
+  }
 
+  this.initialize();
+}
 
 // Prevent dupe events by unbinding?
 // How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
@@ -57,6 +52,5 @@ Project.prototype.events = function() {
   this.$el.find('button').on('click', this.exit);
   this.$el.on('transitionend', this.destroy);
 }
-
 
 module.exports = Project;

@@ -58,7 +58,7 @@ initScene = function() {
   app.spheres = [];
   app.labels = []; 
 
-  var labels = app.pages;
+  var labels = app.routes;
   for (i=0; i<labels.length; i++) {
     mesh = buildSphere(16,256,256,labels[i]);
     labelText = mesh.name;
