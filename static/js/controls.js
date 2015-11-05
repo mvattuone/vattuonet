@@ -36,12 +36,11 @@ module.exports = function(THREE) {
 
       this.onMouseMove = function ( event ) {
           if ( app.camControls.enabled === false ) return;
-
           var movementX = event.originalEvent.movementX || 0,
               movementY = event.originalEvent.movementY || 0;
 
-          app.camControls.orientation.y -= movementX * 0.0025;
-          app.camControls.orientation.x -= movementY * 0.0025;
+          app.camControls.orientation.y -= movementX * 0.0075;
+          app.camControls.orientation.x -= movementY * 0.0075;
           app.camControls.orientation.x = Math.max(-app.camControls.PI_2, Math.min(app.camControls.PI_2, app.camControls.orientation.x));
       };
 
