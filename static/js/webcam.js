@@ -5,6 +5,10 @@ var Webcam = function() {
   
   this.output = $('#video')[0];
 
+  this.stop = function() {
+    self.stream.getVideoTracks()[0].stop()
+  };
+
   this.create = function(success, error) { 
     this.callback = success;
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -23,6 +27,8 @@ var Webcam = function() {
     } else {
       self.output.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
     };
+
+    self.stream = stream;
 
     self.callback();
   }

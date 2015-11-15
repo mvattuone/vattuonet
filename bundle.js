@@ -12665,12 +12665,11 @@ module.exports = function(THREE) {
 
       this.onMouseMove = function ( event ) {
           if ( app.camControls.enabled === false ) return;
-
           var movementX = event.originalEvent.movementX || 0,
               movementY = event.originalEvent.movementY || 0;
 
-          app.camControls.orientation.y -= movementX * 0.0025;
-          app.camControls.orientation.x -= movementY * 0.0025;
+          app.camControls.orientation.y -= movementX * 0.0075;
+          app.camControls.orientation.x -= movementY * 0.0075;
           app.camControls.orientation.x = Math.max(-app.camControls.PI_2, Math.min(app.camControls.PI_2, app.camControls.orientation.x));
       };
 
@@ -12781,6 +12780,9 @@ module.exports = {
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
 // * See if we can make the Controls object not require invocation...
 
+// App Namespace 
+app = {};
+
 // Imports
 // NPM modules
 $ = require('jquery');
@@ -12789,8 +12791,7 @@ THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 Spinner = require('spin.js');
-// TODO: We don't want this.
-window.panel;
+
 // User made modules
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
@@ -12798,7 +12799,10 @@ Projects = require('./projects');
 Posts = require('./posts');
 Panel = require('./panel');
 
+THREE.typeface_js.loadFace(helvetiker);
+
 createSpinner = function() {
+  $('body').addClass('loading');
   var opts = {lines: 9 ,length: 28,width: 16,radius: 42,scale: 0.75,corners: 1,color: '#000',opacity: 0.25,rotate: 30,direction: 1,speed: 1,trail: 60,fps: 20,zIndex: 2e9,className: 'spinner',top: '50%',left: '50%',shadow: false,hwaccel: true }
   app.target = $('.spinner')[0];
   app.spinner = new Spinner(opts).spin(app.target);
@@ -12831,20 +12835,30 @@ onDocumentMouseDown = function(event) {
     posts = new Posts();
     posts.fetch();
     panel = new Panel('blog');
-    app.blogPanel = panel;
-  }
-  else if (sphere === 'contact') {
+  } else if (sphere === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
-  else if (sphere === 'projects') {
+  } else if (sphere === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
-  }
-  else if (sphere === 'about') {
+  } else if (sphere === 'about') {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
   } else {
     return false;
   }
+
+  if (app.scene) {
+    cancelAnimationFrame(app.af);// Stop the animation
+    Webcam.stop();
+    Webcam = undefined;
+    app.scene = null;
+    if (app.sound) { app.sound.source.stop(); }
+    app.sound = null;
+    $('#scene').remove();
+    $('header').removeClass('slideUp');
+    $('header').children().show();
+  }
+
+  app.currentPanel = panel;
 };  
 
 initAudio = function() { 
@@ -12853,7 +12867,7 @@ initAudio = function() {
 
   if (!AudioContext) {
     // fallback
-  }
+}
 };
 
 /* Main Render Loop */
@@ -12866,57 +12880,74 @@ render = app.render = function() {
   app.renderer.render( app.scene, app.camera );
 };
 
-checkRoute = function() {
-   var route = window.location.hash.substring(1);
-   if ( route === 'blog') {
+checkRoute = function(route) {
+  if ( route === 'blog') {
       posts = new Posts();
       posts.fetch();
       panel = new Panel('blog');
-      app.blogPanel = panel;
   }
   else if (route === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
-  else if (route === 'projects') {
+}
+else if (route === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
-  }
-  else if (route === 'about') {
-    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-  } else {
+}
+else if (route === 'about') {
+    panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+} else {
     return false;
-  }
+}
+
+
+if (app.currentPanel) {
+  app.currentPanel.exit().destroy();
+} 
+
+app.currentPanel = panel;
+
 }
 
 init = function() {    
-  
+
   app.routes = ['blog', 'projects', 'contact', 'about'];
   
-  initAudio();
 
-  var Scene = require('./scene');
-  Scene.create();
+  $('#pi').on('click', function() {
+    app.currentPanel.exit();
+    app.currentPanel.$container.css('background-color', 'transparent');
+    
+    var loadScene = function() {
+      initAudio();
+      var Scene = require('./scene');
+      Scene.create();
+      $('.spinner-wrapper').unbind('transitionend');
+    }
 
-  app.camControls = new VattuonetControls(app.camera);
-  app.camControls.initialize(app.camera);
-  app.camControls.enableDamping = true;
-  app.camControls.dampingFactor = 0.25;
-  app.camControls.enableZoom = false;
+    setTimeout(function() {
+      app.currentPanel.destroy();
+      createSpinner(); 
+      $('.spinner-wrapper').on('transitionend', loadScene);
+    }, 100);
+    
 
-  $('#scene').on('mousedown', onDocumentMouseDown);
-  $('#scene').on('touchstart', onDocumentTouchStart);
-
-  render();
+    $('header').addClass('slideUp');
+    $('header').children().hide();
+  
+  });
 }
-
-THREE.typeface_js.loadFace(helvetiker);
-createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
   init();
 
+  $(window).on('hashchange', function(event) {
+    checkRoute(window.location.hash.substring(1));
+  })
+
   if (window.location.hash.substring(1).length > 0) {
     checkRoute(window.location.hash.substring(1));
+  } else {
+    checkRoute('blog');
   }  
 });
 
@@ -12927,7 +12958,7 @@ $(document).ready(function() {
 var Panel = function(name, content) {
     this.name = name;
     this.content = typeof content !== 'undefined' ? content.html : "";
-    this.container = '.container#panels';
+    this.container = '.container';
     this.$container = $(this.container);
     
     this.template = _.template(
@@ -12935,12 +12966,12 @@ var Panel = function(name, content) {
     ); 
                     
     this.initialize = function(name,content) {
+        this.$container.attr('id', this.name + 'Container');
         this.$container.append(this.template({
             title: this.name,
             content: this.content
         }));
 
-        this.el = '.panel#' + this.name;
         this.$el = $('.panel#' + this.name);
         var $el = this.$el;
 
@@ -12949,33 +12980,43 @@ var Panel = function(name, content) {
     };
 
     this.render = function(event) {
-        this.$el.addClass('current');
-        window.location.hash = this.name;
+        self = this;
         this.enter();
-        this.$el.removeClass('enter');
+
+        setTimeout(function() {
+            self.$el.addClass('current');
+        }, 50);
+
+        
+        window.location.hash = this.name;
         cancelAnimationFrame(app.af);
-        return true;
+        return this;
     }
 
     // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
     this.destroy = function(event) {
         var $el = $('.panel.current.exit');
         if ($el.length <= 0) { return false; };
-        window.location.hash = "";
-        app.render();
         $el.remove();
-        $('#scene').on('mousedown', app.onDocumentMouseDown);
-        $('#scene').on('touchstart', app.onDocumentTouchStart);
-        return $el;
+        return this;
     };
 
     this.enter = function(event) {
-        this.$el.addClass('enter');
+        if (event) {
+            app.currentPanel.$el.addClass('enter');
+        } else {
+            this.$el.addClass('enter');    
+        }
+        return this;
     }
 
     this.exit = function(event) {
-        var $el = $('.panel.current');
-        $el.addClass('exit');
+        if (event) {
+            app.currentPanel.$el.addClass('exit');
+        } else {
+            this.$el.addClass('exit');    
+        }
+        return this;
     }
 
     // create our Panel
@@ -12987,13 +13028,13 @@ var Panel = function(name, content) {
 // Prevent dupe events by unbinding?
 // How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
 Panel.prototype.events = function() {
-    this.$el.find('button').unbind('click');
+    var self = this;
+
     this.$el.unbind('transitionend');
     this.$el.unbind('DOMNodeInserted');
     
-    this.$el.bind('DOMNodeInserted', this.enter);
-    this.$el.find('.close').on('click', this.exit);
-    this.$el.on('transitionend', this.destroy);
+    this.$el.bind('DOMNodeInserted', self.enter);    
+    this.$el.on('transitionend', self.destroy);
 }
 
 
@@ -13015,7 +13056,7 @@ var Posts = function() {
 
             $tumblrAPI.on('load', function(e) {
                 self.data = window.tumblr_api_read.posts;
-                self.dispatch(app.blogPanel);
+                self.dispatch(app.currentPanel);
             });
         }
     };
@@ -13195,7 +13236,7 @@ module.exports = Projects;
 },{"./project":13}],15:[function(require,module,exports){
 revealScene = function(event) { 
   app.spinner.stop();
-  $('body').addClass('loaded');
+  $('body').removeClass('loading');
 };
 
 buildSphere = function(radius,widthSegments,heightSegments,name) {
@@ -13227,7 +13268,7 @@ initScene = function() {
     app.scene.add(lights[2]);
   }
 
-  app.camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 100000);
+  app.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 100000);
   app.raycaster = new THREE.Raycaster(); // used with intersections
   app.mouse = new THREE.Vector3(); // used with intersections
   app.clock = new THREE.Clock(); // used with controls
@@ -13298,6 +13339,14 @@ initScene = function() {
     app.scene.add(label);
   });
 
+  app.camControls = new VattuonetControls(app.camera);
+  app.camControls.initialize(app.camera);
+
+  $('#scene').on('mousedown', onDocumentMouseDown);
+  $('#scene').on('touchstart', onDocumentTouchStart);
+
+  render();
+
 };
 
 // Create navigation label that goes above each sphere.
@@ -13319,6 +13368,7 @@ buildLabel = function(labelText) {
 }
 
 successCallback = function(stream) {
+
   Webcam.output.onplay = function() {
     WebcamTexture.draw("greyScale",Webcam.output);
   };
@@ -13328,11 +13378,10 @@ successCallback = function(stream) {
     Webcam.output.play();
   };
 
+  app.stream = stream;
+
   Webcam.output.load();
 };
-
-revealScene();
-
 
 module.exports = {
   create: initScene
@@ -13447,6 +13496,10 @@ var Webcam = function() {
   
   this.output = $('#video')[0];
 
+  this.stop = function() {
+    self.stream.getVideoTracks()[0].stop()
+  };
+
   this.create = function(success, error) { 
     this.callback = success;
     navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
@@ -13465,6 +13518,8 @@ var Webcam = function() {
     } else {
       self.output.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
     };
+
+    self.stream = stream;
 
     self.callback();
   }

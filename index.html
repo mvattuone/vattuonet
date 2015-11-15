@@ -21,11 +21,29 @@
     <div class="spinner"></div>
   </div>
 
+  <header>
+    <h1><a href="#blog">Vattuonet</a></h1>
+    <nav class="menu">      
+      <ul>
+        <li><a href="#blog">Blog</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#about">About</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </header>
 
-  <div class="container" id="panels"></div>
 
-  <video id="video"></video>
-  <script>var app = {};</script>
+
+  <section class="main">
+    <div class="container cf"></div>
+    <video id="video" class="hidden"></video>
+  </section>
+
+  <footer>
+    <span id="pi">π</span>
+  </footer>
+  
   <script src="/bundle.js"></script>
 
   <script type="text/template" id="projectTemplate">
@@ -52,8 +70,6 @@
   <script type="text/template" id="panelTemplate">
     <div id="<%= title %>" class="panel">
       <div class="panel-wrapper">
-        <h2 class="panel-title"><%= title %></h2>
-        <span class="close">Close ×</span>
         <div class="panel-content">
           <%= content %>
         </div>

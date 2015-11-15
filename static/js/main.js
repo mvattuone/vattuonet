@@ -6,6 +6,9 @@
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
 // * See if we can make the Controls object not require invocation...
 
+// App Namespace 
+app = {};
+
 // Imports
 // NPM modules
 $ = require('jquery');
@@ -14,8 +17,7 @@ THREE = require('threejs-build');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 Spinner = require('spin.js');
-// TODO: We don't want this.
-window.panel;
+
 // User made modules
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
@@ -23,7 +25,10 @@ Projects = require('./projects');
 Posts = require('./posts');
 Panel = require('./panel');
 
+THREE.typeface_js.loadFace(helvetiker);
+
 createSpinner = function() {
+  $('body').addClass('loading');
   var opts = {lines: 9 ,length: 28,width: 16,radius: 42,scale: 0.75,corners: 1,color: '#000',opacity: 0.25,rotate: 30,direction: 1,speed: 1,trail: 60,fps: 20,zIndex: 2e9,className: 'spinner',top: '50%',left: '50%',shadow: false,hwaccel: true }
   app.target = $('.spinner')[0];
   app.spinner = new Spinner(opts).spin(app.target);
@@ -56,20 +61,30 @@ onDocumentMouseDown = function(event) {
     posts = new Posts();
     posts.fetch();
     panel = new Panel('blog');
-    app.blogPanel = panel;
-  }
-  else if (sphere === 'contact') {
+  } else if (sphere === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
-  else if (sphere === 'projects') {
+  } else if (sphere === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
-  }
-  else if (sphere === 'about') {
+  } else if (sphere === 'about') {
     var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
   } else {
     return false;
   }
+
+  if (app.scene) {
+    cancelAnimationFrame(app.af);// Stop the animation
+    Webcam.stop();
+    Webcam = undefined;
+    app.scene = null;
+    if (app.sound) { app.sound.source.stop(); }
+    app.sound = null;
+    $('#scene').remove();
+    $('header').removeClass('slideUp');
+    $('header').children().show();
+  }
+
+  app.currentPanel = panel;
 };  
 
 initAudio = function() { 
@@ -78,7 +93,7 @@ initAudio = function() {
 
   if (!AudioContext) {
     // fallback
-  }
+}
 };
 
 /* Main Render Loop */
@@ -91,57 +106,74 @@ render = app.render = function() {
   app.renderer.render( app.scene, app.camera );
 };
 
-checkRoute = function() {
-   var route = window.location.hash.substring(1);
-   if ( route === 'blog') {
+checkRoute = function(route) {
+  if ( route === 'blog') {
       posts = new Posts();
       posts.fetch();
       panel = new Panel('blog');
-      app.blogPanel = panel;
   }
   else if (route === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
-  else if (route === 'projects') {
+}
+else if (route === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
-  }
-  else if (route === 'about') {
-    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-  } else {
+}
+else if (route === 'about') {
+    panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+} else {
     return false;
-  }
+}
+
+
+if (app.currentPanel) {
+  app.currentPanel.exit().destroy();
+} 
+
+app.currentPanel = panel;
+
 }
 
 init = function() {    
-  
+
   app.routes = ['blog', 'projects', 'contact', 'about'];
   
-  initAudio();
 
-  var Scene = require('./scene');
-  Scene.create();
+  $('#pi').on('click', function() {
+    app.currentPanel.exit();
+    app.currentPanel.$container.css('background-color', 'transparent');
+    
+    var loadScene = function() {
+      initAudio();
+      var Scene = require('./scene');
+      Scene.create();
+      $('.spinner-wrapper').unbind('transitionend');
+    }
 
-  app.camControls = new VattuonetControls(app.camera);
-  app.camControls.initialize(app.camera);
-  app.camControls.enableDamping = true;
-  app.camControls.dampingFactor = 0.25;
-  app.camControls.enableZoom = false;
+    setTimeout(function() {
+      app.currentPanel.destroy();
+      createSpinner(); 
+      $('.spinner-wrapper').on('transitionend', loadScene);
+    }, 100);
+    
 
-  $('#scene').on('mousedown', onDocumentMouseDown);
-  $('#scene').on('touchstart', onDocumentTouchStart);
-
-  render();
+    $('header').addClass('slideUp');
+    $('header').children().hide();
+  
+  });
 }
-
-THREE.typeface_js.loadFace(helvetiker);
-createSpinner(); // So we don't see DOM weirdness
 
 $(document).ready(function() {
   init();
 
+  $(window).on('hashchange', function(event) {
+    checkRoute(window.location.hash.substring(1));
+  })
+
   if (window.location.hash.substring(1).length > 0) {
     checkRoute(window.location.hash.substring(1));
+  } else {
+    checkRoute('blog');
   }  
 });
 

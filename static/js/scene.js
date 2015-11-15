@@ -1,6 +1,6 @@
 revealScene = function(event) { 
   app.spinner.stop();
-  $('body').addClass('loaded');
+  $('body').removeClass('loading');
 };
 
 buildSphere = function(radius,widthSegments,heightSegments,name) {
@@ -32,7 +32,7 @@ initScene = function() {
     app.scene.add(lights[2]);
   }
 
-  app.camera = new THREE.PerspectiveCamera(60, window.innerWidth/window.innerHeight, 1, 100000);
+  app.camera = new THREE.PerspectiveCamera(45, window.innerWidth/window.innerHeight, 1, 100000);
   app.raycaster = new THREE.Raycaster(); // used with intersections
   app.mouse = new THREE.Vector3(); // used with intersections
   app.clock = new THREE.Clock(); // used with controls
@@ -103,6 +103,14 @@ initScene = function() {
     app.scene.add(label);
   });
 
+  app.camControls = new VattuonetControls(app.camera);
+  app.camControls.initialize(app.camera);
+
+  $('#scene').on('mousedown', onDocumentMouseDown);
+  $('#scene').on('touchstart', onDocumentTouchStart);
+
+  render();
+
 };
 
 // Create navigation label that goes above each sphere.
@@ -124,6 +132,7 @@ buildLabel = function(labelText) {
 }
 
 successCallback = function(stream) {
+
   Webcam.output.onplay = function() {
     WebcamTexture.draw("greyScale",Webcam.output);
   };
@@ -133,11 +142,10 @@ successCallback = function(stream) {
     Webcam.output.play();
   };
 
+  app.stream = stream;
+
   Webcam.output.load();
 };
-
-revealScene();
-
 
 module.exports = {
   create: initScene

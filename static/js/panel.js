@@ -3,7 +3,7 @@
 var Panel = function(name, content) {
     this.name = name;
     this.content = typeof content !== 'undefined' ? content.html : "";
-    this.container = '.container#panels';
+    this.container = '.container';
     this.$container = $(this.container);
     
     this.template = _.template(
@@ -11,12 +11,12 @@ var Panel = function(name, content) {
     ); 
                     
     this.initialize = function(name,content) {
+        this.$container.attr('id', this.name + 'Container');
         this.$container.append(this.template({
             title: this.name,
             content: this.content
         }));
 
-        this.el = '.panel#' + this.name;
         this.$el = $('.panel#' + this.name);
         var $el = this.$el;
 
@@ -25,33 +25,43 @@ var Panel = function(name, content) {
     };
 
     this.render = function(event) {
-        this.$el.addClass('current');
-        window.location.hash = this.name;
+        self = this;
         this.enter();
-        this.$el.removeClass('enter');
+
+        setTimeout(function() {
+            self.$el.addClass('current');
+        }, 50);
+
+        
+        window.location.hash = this.name;
         cancelAnimationFrame(app.af);
-        return true;
+        return this;
     }
 
     // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
     this.destroy = function(event) {
         var $el = $('.panel.current.exit');
         if ($el.length <= 0) { return false; };
-        window.location.hash = "";
-        app.render();
         $el.remove();
-        $('#scene').on('mousedown', app.onDocumentMouseDown);
-        $('#scene').on('touchstart', app.onDocumentTouchStart);
-        return $el;
+        return this;
     };
 
     this.enter = function(event) {
-        this.$el.addClass('enter');
+        if (event) {
+            app.currentPanel.$el.addClass('enter');
+        } else {
+            this.$el.addClass('enter');    
+        }
+        return this;
     }
 
     this.exit = function(event) {
-        var $el = $('.panel.current');
-        $el.addClass('exit');
+        if (event) {
+            app.currentPanel.$el.addClass('exit');
+        } else {
+            this.$el.addClass('exit');    
+        }
+        return this;
     }
 
     // create our Panel
@@ -63,13 +73,13 @@ var Panel = function(name, content) {
 // Prevent dupe events by unbinding?
 // How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
 Panel.prototype.events = function() {
-    this.$el.find('button').unbind('click');
+    var self = this;
+
     this.$el.unbind('transitionend');
     this.$el.unbind('DOMNodeInserted');
     
-    this.$el.bind('DOMNodeInserted', this.enter);
-    this.$el.find('.close').on('click', this.exit);
-    this.$el.on('transitionend', this.destroy);
+    this.$el.bind('DOMNodeInserted', self.enter);    
+    this.$el.on('transitionend', self.destroy);
 }
 
 

@@ -14,7 +14,7 @@ var Posts = function() {
 
             $tumblrAPI.on('load', function(e) {
                 self.data = window.tumblr_api_read.posts;
-                self.dispatch(app.blogPanel);
+                self.dispatch(app.currentPanel);
             });
         }
     };

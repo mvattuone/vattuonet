@@ -1,3 +1,30 @@
+/**
+ * For modern browsers
+ * 1. The space content is one way to avoid an Opera bug when the
+ *    contenteditable attribute is included anywhere else in the document.
+ *    Otherwise it causes space to appear at the top and bottom of elements
+ *    that are clearfixed.
+ * 2. The use of `table` rather than `block` is only necessary if using
+ *    `:before` to contain the top-margins of child elements.
+ */
+.cf:before,
+.cf:after {
+    content: " "; /* 1 */
+    display: table; /* 2 */
+}
+
+.cf:after {
+    clear: both;
+}
+
+/**
+ * For IE 6/7 only
+ * Include this rule to trigger hasLayout and contain floats.
+ */
+.cf {
+    *zoom: 1;
+}
+
 img {
     max-width:100%;
 }
@@ -6,9 +33,14 @@ body, #container {
     width:100%;
     height:100vh;
     margin:0;
+    color: #FFF;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1, h2, h3, h4, h5, h6, p, span {
+    text-shadow: 0px 0px 1px rgba(0,0,0,0.6);
+}
+
+h1, h2, h3, h4, h5, h6, nav ul li {
     font-family: 'Montserrat', sans-serif;
 }
 
@@ -16,55 +48,165 @@ p, span, li {
     font-family: 'EB Garamond', serif;
 }
 
+a {
+  color: rgba(6, 62, 99, 1);
+  text-shadow: 0 0 0;
+}
 
-.spinner-wrapper {
+header {
+  height:10vh;
+  display:block;
+  width:100%;
+  position:relative;
+  z-index:7;
+  transition: all 0.15s ease-in;
+  -webkit-transition: all 0.15s ease-in;
+  background: #063E63;   
+}
+
+header.slideUp { 
+  height:0;
+}
+
+.menu {
+  float:right;
+}
+
+ul {
+  list-style:none;
+  padding:0; margin:0;
+}
+
+.menu li {
+  vertical-align: middle;
+  display:inline-block;
+  margin-right:10px;
+  padding: 27px 6px 17px 8px;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #FFF;
+  font-size:18px;
+  position:relative;
+}
+
+header h1 {
+  font-size:36px;
+  margin:0;
+  padding: 15px 6px 17px 20px;
+  color: #FFF;
+  display:inline-block;
+  letter-spacing: 0;
+  float:left;
+  text-transform:uppercase;
+}
+
+header h1 a {
+  color:#FFF;
+  text-decoration: none;
+}
+
+.menu li:after {
+  content: "\\";
+  margin-left:20px;
+}
+
+.menu li:last-child:after {
+  content: "";
+}
+
+.menu li a {
+  color: #FFF;
+  text-decoration: none;
+}
+
+.menu a:hover:before, .menu a:active:before, .menu a:visited:hover:before, .menu a:visited:active:before {
+  visibility: visible;
+  -webkit-transform: scaleX(1);
+  transform: scaleX(1);
+}
+
+.menu li a:before {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 1px;
+  bottom: 0;
+  left: 0;
+  background-color: #FFF;
+  visibility: hidden;
+  -webkit-transform: scaleX(0);
+  transform: scaleX(0);
+  -webkit-transition: all 0.15s ease-in-out 0s;
+  -moz-transition: all 0.15s ease-in-out 0s;
+  transition: all 0.15s ease-in-out 0s;
+}
+
+.menu li a:hover,
+.menu li a:focus {
+  -webkit-transition: 0.3s;
+  -moz-transition: 0.3s;
+  transition: 0.3s;
+}
+
+.loading .spinner-wrapper {
     position:absolute;
-    z-index:4;
+    z-index:10;
     top:0; left:0;
     opacity:1;
     height:100%;
-    background-color:transparent;
-    -webkit-transition: opacity 1.5s ease-in;
-    transition: opacity 1.5s ease-in;
+    -webkit-transition: opacity .15s ease-in;
+    transition: opacity .15s ease-in;
     height:100vh;
     width:100vw;
     overflow:hidden;
-    background: #063E63;
-    
+    background: #063E63;   
 }
 
-.loaded .spinner-wrapper {
-    opacity:0;
+.spinner-wrapper {
+    opacity:0; 
+    -webkit-transition: opacity .15s ease-in;
+    transition: opacity .15s ease-in;
 }
 
 #scene {
     position:absolute;
     top:0;
 
-    -webkit-transition: opacity 1.5s ease-in;
-    transition: opacity 1.5s ease-in;
+    -webkit-transition: opacity .15s ease-in;
+    transition: opacity .15s ease-in;
     opacity:0;
 }
 
-.loaded #scene {
+#scene.loading {
+  opacity:0;
+}
+
+#scene {
     opacity:1;
-    z-index:5;
+    z-index:11;
 }
 
 .panel { 
     width: 100vw;
-    min-height:100vh;
+    height:90vh;
     overflow:scroll;
-    top: 0;
+    top: 10vh;
     left: 0;
     position: absolute;
     z-index:6;
-    transition: transform 0.3s linear;
+    opacity:0;
+    background-color: rgba(42, 98, 141,1);   
 }
 
-.panel.current.exit,
-.panel.current.enter {
-    transition: transform 0.3s linear;
+.panel.current {
+  opacity:1;
+}
+
+.panel.exit,
+.panel.enter {
+    transition: all 0.15s linear;
+    -webkit-transition: all 0.15s linear;
 }
 
 .panel.current.exit#about {
@@ -72,35 +214,39 @@ p, span, li {
 }
 
 .panel.current.exit#contact {
-    transform: translateX(90%);
+    transform: translateX(100%);
 }
 
 .panel.current.exit#blog { 
-    transform: translateY(-100%);
+    transform: translateY(-111%);
 }
 
 .panel.current.exit#projects {
-    transform: translateY(80%);
+    transform: translateY(100%);
 }
 
 .panel#about {
     transform: translateX(-100%);
-    background-color: #1663e9;
 }
 
 .panel#contact {
-    transform: translateX(90%);
-    background-color: #38bca6;
+    transform: translateX(100%);
 }
 
 .panel#blog {
-    transform: translateY(-100%);
-    background-color: #de9221;
+    transform: translateY(-111%);
 }
 
 .panel#projects {
-    transform: translateY(80%);
-    background-color: #fff;
+    transform: translateY(100%);
+}
+
+.main,
+.container {
+    width:100%;
+    height:90vh;
+    top:10vh;
+    background-color: rgba(42, 98, 141,0.4);   
 }
 
 .panel#about.current {
@@ -129,28 +275,10 @@ p, span, li {
     float:right;
 }
 
-/* Video MUST be position:absolute; to preserve full width scene */
-#video {
-    visibility: hidden;
-    position:absolute;
-}
-
-.close {
-  font-size: 20px;
-  font-weight: bold;
-  line-height: 18px;
-  color: #000000;
-  text-shadow: 0 1px 0 #ffffff;
-  opacity: 0.2;
-  filter: alpha(opacity=20);
-  text-decoration: none;
-}
-.close:hover {
-  color: #000000;
-  text-decoration: none;
-  opacity: 0.4;
-  filter: alpha(opacity=40);
-  cursor: pointer;
+.hidden {
+  visibility: hidden;
+  position:absolute;
+  top:0; left:0;
 }
 
 .panel-content {
@@ -203,9 +331,9 @@ p, span, li {
 }
 
 .tag {
-  background: #eee;
+  background-color: #063E63;
   border-radius: 3px 0 0 3px;
-  color: #999;
+  color: #FFF;
   display: inline-block;
   height: 26px;
   line-height: 26px;
@@ -216,11 +344,10 @@ p, span, li {
   -webkit-transition: color 0.2s;
 }
 
-.tag:hover {
-  background-color: #063E63;
-  color: white;
-}
-
-.tag:hover::after {
-   border-left-color: #063E63; 
+#pi {
+  position:absolute;
+  bottom:10px;
+  right:20px;
+  z-index:10;
+  cursor:pointer;
 }
