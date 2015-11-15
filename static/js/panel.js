@@ -48,7 +48,7 @@ var Panel = function(name, content) {
 
     this.enter = function(event) {
         if (event) {
-            app.currentPanel.$el.addClass('enter');
+            this.$el.addClass('enter');
         } else {
             this.$el.addClass('enter');    
         }
@@ -57,7 +57,7 @@ var Panel = function(name, content) {
 
     this.exit = function(event) {
         if (event) {
-            app.currentPanel.$el.addClass('exit');
+            this.$el.addClass('exit');
         } else {
             this.$el.addClass('exit');    
         }
