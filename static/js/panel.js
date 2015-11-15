@@ -46,9 +46,12 @@ var Panel = function(name, content) {
         return this;
     };
 
+    // TODO: I don't really like how we use the app namespace to target
+    // the element. Is that something that is a consequence of using 
+    // an event handler on an object method???
     this.enter = function(event) {
         if (event) {
-            this.$el.addClass('enter');
+            app.currentTarget.$el.addClass('enter');
         } else {
             this.$el.addClass('enter');    
         }
@@ -57,7 +60,7 @@ var Panel = function(name, content) {
 
     this.exit = function(event) {
         if (event) {
-            this.$el.addClass('exit');
+            app.currentTarget.$el.addClass('exit');
         } else {
             this.$el.addClass('exit');    
         }
