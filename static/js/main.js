@@ -78,7 +78,7 @@ onDocumentMouseDown = function(event) {
     Webcam = undefined;
     app.scene = null;
     if (app.sound) { app.sound.source.stop(); }
-    app.sound = null;
+    app.sound =
     $('#scene').remove();
     $('header').removeClass('slideUp');
     $('header').children().show();
@@ -107,6 +107,12 @@ render = app.render = function() {
 };
 
 checkRoute = function(route) {
+
+  if (app.currentPanel) {
+    app.currentPanel.exit();
+  } 
+
+  setTimeout(function() {
   if ( route === 'blog') {
       posts = new Posts();
       posts.fetch();
@@ -114,23 +120,19 @@ checkRoute = function(route) {
   }
   else if (route === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-}
-else if (route === 'projects') {
-    projects = new Projects();
-    panel = new Panel('projects', projects);
-}
-else if (route === 'about') {
-    panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-} else {
-    return false;
-}
+  }
+  else if (route === 'projects') {
+      projects = new Projects();
+      panel = new Panel('projects', projects);
+  }
+  else if (route === 'about') {
+      panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+  } else {
+      return false;
+  }
 
-
-if (app.currentPanel) {
-  app.currentPanel.exit().destroy();
-} 
-
-app.currentPanel = panel;
+  app.currentPanel = panel;
+  }, 0)
 
 }
 

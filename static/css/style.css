@@ -1,3 +1,7 @@
+body {
+  -webkit-font-smoothing: antialiased;
+}
+
 /**
  * For modern browsers
  * 1. The space content is one way to avoid an Opera bug when the
@@ -33,15 +37,15 @@ body, #container {
     width:100%;
     height:100vh;
     margin:0;
-    color: #FFF;
+    color: #111;
 }
 
 h1, h2, h3, h4, h5, h6, p, span {
-    text-shadow: 0px 0px 1px rgba(0,0,0,0.6);
+    font-weight:300;
 }
 
-h1, h2, h3, h4, h5, h6, nav ul li {
-    font-family: 'Montserrat', sans-serif;
+h1, h2, h3, h4, h5, h6, nav ul li, .button {
+    font-family: 'Martel Sans', sans-serif;
 }
 
 p, span, li {
@@ -61,7 +65,11 @@ header {
   z-index:7;
   transition: all 0.15s ease-in;
   -webkit-transition: all 0.15s ease-in;
-  background: #063E63;   
+  background-color: rgba(2,164,211,1);   
+}
+
+header h1 a {
+  background-color: rgba(2,164,211,0.6);   
 }
 
 header.slideUp { 
@@ -79,21 +87,21 @@ ul {
 
 .menu li {
   vertical-align: middle;
-  display:inline-block;
-  margin-right:10px;
-  padding: 27px 6px 17px 8px;
-  font-size: 18px;
-  text-transform: uppercase;
-  letter-spacing: .03em;
-  color: #FFF;
-  font-size:18px;
-  position:relative;
+    display: inline-block;
+    margin-right: 10px;
+    padding: 27px 3px 17px 0px;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #FFF;
+    font-size: 13px;
+    position: relative;
 }
 
 header h1 {
   font-size:36px;
   margin:0;
-  padding: 15px 6px 17px 20px;
+  padding: 12px 6px 17px 20px;
   color: #FFF;
   display:inline-block;
   letter-spacing: 0;
@@ -108,7 +116,7 @@ header h1 a {
 
 .menu li:after {
   content: "\\";
-  margin-left:20px;
+  margin-left:17px;
 }
 
 .menu li:last-child:after {
@@ -118,6 +126,7 @@ header h1 a {
 .menu li a {
   color: #FFF;
   text-decoration: none;
+  position:relative;
 }
 
 .menu a:hover:before, .menu a:active:before, .menu a:visited:hover:before, .menu a:visited:active:before {
@@ -132,7 +141,8 @@ header h1 a {
   width: 100%;
   height: 1px;
   bottom: 0;
-  left: 0;
+  left: 0px;
+  top: 22px;
   background-color: #FFF;
   visibility: hidden;
   -webkit-transform: scaleX(0);
@@ -140,6 +150,7 @@ header h1 a {
   -webkit-transition: all 0.15s ease-in-out 0s;
   -moz-transition: all 0.15s ease-in-out 0s;
   transition: all 0.15s ease-in-out 0s;
+  box-shadow: 0px 1px 1px rgba(42,98,141,0.6);
 }
 
 .menu li a:hover,
@@ -196,7 +207,6 @@ header h1 a {
     position: absolute;
     z-index:6;
     opacity:0;
-    background-color: rgba(42, 98, 141,1);   
 }
 
 .panel.current {
@@ -204,7 +214,9 @@ header h1 a {
 }
 
 .panel.exit,
-.panel.enter {
+.panel.enter,
+.project.enter,
+.project.exit {
     transition: all 0.15s linear;
     -webkit-transition: all 0.15s linear;
 }
@@ -246,7 +258,7 @@ header h1 a {
     width:100%;
     height:90vh;
     top:10vh;
-    background-color: rgba(42, 98, 141,0.4);   
+    background-color: rgba(255,255,255,1);
 }
 
 .panel#about.current {
@@ -285,10 +297,15 @@ header h1 a {
     clear:both;
 }
 
+#projects .panel-wrapper {
+  padding:0;
+  margin:0;
+}
+
 .panel-wrapper {
     display:block;
     margin:0 auto;
-    padding:20px 10%;
+    padding:0 10%;
     height:100%;
     overflow:scroll;
 }
@@ -298,25 +315,72 @@ header h1 a {
 }
 
 .project {
-    margin:20px 0;
+    background-repeat: no-repeat;
+    position: relative;
+    width: 33.33333%;
+    height: 30vh;
+    display: inline-block;
+    background-size: cover;
+    float: left;
 }
 
-.project-image {
-    width:59%;
-    display:inline-block;
+.project.current {
+    position: absolute;
+    left: 50%;
+    width: 70vw;
+    height: 63vh;
+    z-index: 12;
+    margin: 0;
+    top: 50%;
+    margin-left: -35vw;
+    margin-top: -31.5vh;
 }
 
 .project-info {
-    width:38%;
-    display:inline-block;
+    width: 100%;
+    display: inline-block;
     vertical-align: top;
-    margin-left:2%;
+    padding: 10px;
+    background-color: #FFF;
+    position: absolute;
+    bottom: 0;
+    left: 0;
 }
 
 .project-name {
-    margin-top:0;
-    font-weight: normal;
-    text-transform: uppercase;
+  margin-top: 0;
+  font-weight: normal;
+  text-transform: uppercase;
+  position: absolute;
+  top: 71px;
+  display: block;
+  width: 100%;
+  text-align: center;
+  transition: all 0.2s ease-in;
+}
+
+.project-name:before {
+  content: "";
+  position: absolute;
+  display: block;
+  width: 340px;
+  height: 161px;
+  background-color: rgba(0,0,0,0.2);
+  margin-top: -71px;
+}
+
+.project.current .project-name {
+  text-align:left;
+  position:static;
+  color#FFF;
+}
+
+.project.current .project-name:before {
+  display:none;
+}
+
+.tags {
+  display:inline-block;
 }
 
 .tags ul {
@@ -326,22 +390,29 @@ header h1 a {
   padding: 0;
 }
 
-.tags ul li {
-  float: left; 
+.tags li:after {
+  content:", ";
+  margin-right:2px;
+}
+
+.tags li:last-child:after {
+  content:"";
+  margin:0;
 }
 
 .tag {
-  background-color: #063E63;
-  border-radius: 3px 0 0 3px;
-  color: #FFF;
   display: inline-block;
-  height: 26px;
-  line-height: 26px;
-  padding: 0 20px 0 23px;
-  position: relative;
-  margin: 0 10px 10px 0;
+  font-style: italic;
+}
+
+.button {
+  float:right;
+  background-color: #063E63;;
+  padding:11px 8px;
+  color: #FFF;
+  text-transform: uppercase;
   text-decoration: none;
-  -webkit-transition: color 0.2s;
+  margin-bottom:10px;
 }
 
 #pi {

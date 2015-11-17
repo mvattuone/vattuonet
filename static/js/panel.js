@@ -2,7 +2,7 @@
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
     this.name = name;
-    this.content = typeof content !== 'undefined' ? content.html : "";
+    this.content = typeof content === 'object' ? content.html : content;
     this.container = '.container';
     this.$container = $(this.container);
     
@@ -51,7 +51,7 @@ var Panel = function(name, content) {
     // an event handler on an object method???
     this.enter = function(event) {
         if (event) {
-            app.currentTarget.$el.addClass('enter');
+            app.currentPanel.$el.addClass('enter');
         } else {
             this.$el.addClass('enter');    
         }
@@ -60,7 +60,7 @@ var Panel = function(name, content) {
 
     this.exit = function(event) {
         if (event) {
-            app.currentTarget.$el.addClass('exit');
+            app.currentPanel.$el.addClass('exit');
         } else {
             this.$el.addClass('exit');    
         }
