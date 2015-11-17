@@ -12852,7 +12852,7 @@ onDocumentMouseDown = function(event) {
     Webcam = undefined;
     app.scene = null;
     if (app.sound) { app.sound.source.stop(); }
-    app.sound = null;
+    app.sound =
     $('#scene').remove();
     $('header').removeClass('slideUp');
     $('header').children().show();
@@ -12881,6 +12881,12 @@ render = app.render = function() {
 };
 
 checkRoute = function(route) {
+
+  if (app.currentPanel) {
+    app.currentPanel.exit();
+  } 
+
+  setTimeout(function() {
   if ( route === 'blog') {
       posts = new Posts();
       posts.fetch();
@@ -12888,23 +12894,19 @@ checkRoute = function(route) {
   }
   else if (route === 'contact') {
     panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-}
-else if (route === 'projects') {
-    projects = new Projects();
-    panel = new Panel('projects', projects);
-}
-else if (route === 'about') {
-    panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-} else {
-    return false;
-}
+  }
+  else if (route === 'projects') {
+      projects = new Projects();
+      panel = new Panel('projects', projects);
+  }
+  else if (route === 'about') {
+      panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
+  } else {
+      return false;
+  }
 
-
-if (app.currentPanel) {
-  app.currentPanel.exit().destroy();
-} 
-
-app.currentPanel = panel;
+  app.currentPanel = panel;
+  }, 0)
 
 }
 
@@ -12957,7 +12959,7 @@ $(document).ready(function() {
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
     this.name = name;
-    this.content = typeof content !== 'undefined' ? content.html : "";
+    this.content = typeof content === 'object' ? content.html : content;
     this.container = '.container';
     this.$container = $(this.container);
     
@@ -13001,6 +13003,9 @@ var Panel = function(name, content) {
         return this;
     };
 
+    // TODO: I don't really like how we use the app namespace to target
+    // the element. Is that something that is a consequence of using 
+    // an event handler on an object method???
     this.enter = function(event) {
         if (event) {
             app.currentPanel.$el.addClass('enter');
@@ -13098,53 +13103,82 @@ var Project = function(name, url, image, description, tags) {
   this.image = image;
   this.description = description;
   this.tags = tags;
+  this.container = '.container'
+  this.$container = $(this.container);
 
   this.template = _.template(
     $( "script#projectTemplate" ).html()
   ); 
 
   this.initialize = function() {
-    
+
+    this.slug = this.slugify(this.name);
+
     this.html = this.template({
       name: this.name,
+      slug: this.slug,
       url: this.url,
       image: this.image,
       description: this.description,
       tags: this.tags
     });
 
+    this.$html = $(this.html);
+
+    this.events();
+
   };
 
-  // TODO: This I guess would be where we have WebGL talking to DOM, via an observer?
-  this.destroy = function(event) {
-    var $el = $('.project.current.exit');
-    if ($el.length <= 0) { return false; };
-    $el.remove();
-    return $el;
-  };
+  this.slugify = function(name) {
+    return name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-');
+  }
 
   this.enter = function(event) {
-    this.$el.addClass('enter');
+      if (event) {
+          event.currentTarget.$html.addClass('enter');
+      } else {
+          $("#" + this.slug).addClass('enter');      
+      }
+      return this;
   }
 
   this.exit = function(event) {
-    var $el = $('.project.active');
-    $el.addClass('exit');
+      if (event) {
+          event.currentTarget.$html.addClass('exit');
+      } else {
+          $("#" + this.slug).addClass('exit');    
+      }
+      $("#" + this.slug).find('.project-info').addClass('hidden');
+      $('.project.current').removeClass('current').removeClass('exit');
+      return this;
   }
+
+    this.expand = function(event) {
+        if (app.currentProject) {
+
+            if (app.currentProject === event.data) {
+                app.currentProject.exit();
+                return false;
+            }
+
+            app.currentProject.exit();
+        }
+
+        app.currentProject = event.data;
+        event.data.enter();
+        $("#" + event.data.slug + " > .project-name").addClass('hidden');
+        $("#" + event.data.slug).addClass('current');
+        $(this).find('.project-info').removeClass('hidden');
+    }
 
   this.initialize();
 }
 
-// Prevent dupe events by unbinding?
-// How do I only initialize the event handler if it hasn't been initialized but in an elegant way?
 Project.prototype.events = function() {
-  this.$el.find('button').unbind('click');
-  this.$el.unbind('transitionend');
-  this.$el.unbind('DOMNodeInserted');
-
-  this.$el.bind('DOMNodeInserted', this.enter);
-  this.$el.find('button').on('click', this.exit);
-  this.$el.on('transitionend', this.destroy);
+    var self = this;
+    this.$container.on('mouseenter', '.project#' + this.slug + ':not(.current)', function() { $(this).find('.project-name').removeClass('hidden'); });
+    this.$container.on('mouseleave', '.project#' + this.slug  + ':not(.current)', function() { $(this).find('.project-name').addClass('hidden'); });
+    this.$container.on('click', ".project#" + this.slug, this, this.expand);
 }
 
 module.exports = Project;
@@ -13169,42 +13203,49 @@ Projects = function() {
       {
           'name': 'Float Map',
           'url': 'http://floatmap.us',
-          'image': 'static/projects/floatmap.png',
+          'image': 'static/projects/vattuonet-floatmap.png',
           'description': 'Map that visualizes forecasted changes in extreme weather in the Midwest US. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition',
           'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3', 'Grunt']
       },
       {
+          'name': 'Fogcutter',
+          'url': 'http://fogcutter-sf.com',
+          'image': 'static/projects/vattuonet-fogcutter.png',
+          'description': 'Fogcutter is an excellent catering service whose goal is to provide "unique, eclectic, and inspired food to the San Francisco Bay Area." Believe me, they do not disappoint.',
+          'tags': ['Wordpress']
+      },
+      {
           'name': '511CC Guaranteed Ride Home',
           'url': 'http://grh.511contracosta.org',
-          'image': 'static/projects/grh.png',
+          'image': 'static/projects/vattuonet-grh.png',
           'description': 'Worked with the fine folks of <a href=“http://blinktag.com/”>BlinkTag</a> to assist <a href=“http://511cc.org”>511 Contra Costa</a> and the <a href=“http://wcctac.org/”>West Contra Costa Transportation Advisory Committee</a> in improving the technology behind their Guaranteed Ride Home program. Working closely with a program manager, I replaced a set of Google Forms and Spreadsheets with a SPA to more easily manage and sort member registrations and reimbursement submissions.',
           'tags': ['Django', 'BackboneJS', 'RequireJS', 'Grunt']
       },
       {
           'name': 'Climate Truth',
           'url': 'http://climatetruth.org',
-          'image': 'static/projects/ct.png',
+          'image': 'static/projects/vattuonet-climatetruth.png',
           'description': 'Integrated HTML/CSS/JS for ClimateTruth.org into a Django project, utilizing a mix of Postgres and Memcached to render and persist content acquired from the Actionkit CRM.',
           'tags': ['Django', 'Actionkit', 'Postgres', 'Memcached', 'Grunt']
       },
       {
           'name': 'Susannah Conway',
           'url': 'http://susannahconway.com',
-          'image': 'static/projects/sc.png',
+          'image': 'static/projects/vattuonet-sc.png',
           'description': 'Worked closely with a <a href="http://chelseydyer.com/">designer</a> to develop a set of mockups and interactive elements into a custom Wordpress theme for a successful online blog. This project was noteworthy in that it was my first attempt at utilizing the <a href="https://roots.io/sage/">Sage Starter Theme</a> for Wordpress -- I would highly recommend giving it a spin.',
           'tags': ['Wordpress', 'SCSS', 'jQuery', 'Gulp']
       },
       {
           'name': 'Connectome',
           'url': 'http://connectome.stanford.edu',
-          'image': 'static/projects/connectome.png',
+          'image': 'static/projects/vattuonet-connectome.png',
           'description': 'I helped develop an interactive visualization tool that displays collaborations within the autism research network',
           'tags': ['jQuery', 'D3', 'Parse']
       },
       {
           'name': 'Climate Relief',
           'url': 'https://act.climaterelief.org/donate/donate_CAdrought/',
-          'image': 'static/projects/crf.png',
+          'image': 'static/projects/vattuonet-crf.png',
           'description': 'I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
           'tags': ['Django', 'LESS', 'jQuery', 'Actionkit']
       }
