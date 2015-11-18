@@ -36,49 +36,8 @@ var Project = function(name, url, image, description, tags) {
     return name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-');
   }
 
-  this.enter = function(event) {
-      if (event) {
-          event.currentTarget.$html.addClass('enter');
-      } else {
-          $("#" + this.slug).addClass('enter');      
-      }
-      return this;
-  }
-
-  this.exit = function(event) {
-      if (event) {
-          event.currentTarget.$html.addClass('exit');
-      } else {
-          $("#" + this.slug).addClass('exit');    
-      }
-      $("#" + this.slug).find('.project-info').addClass('hidden');
-      $('.project.current').removeClass('current').removeClass('exit');
-      return this;
-  }
-
-  this.destroy = function(event) {
-        var $el = $('.project.current.exit');
-        if ($el.length <= 0) { return false; };
-        $el.remove();
-        return this;
-  };
-
-  this.expand = function(event) {
-      if (app.currentProject) {
-
-          if (app.currentProject === event.data) {
-              app.currentProject.exit();
-              return false;
-          }
-
-          app.currentProject.exit();
-      }
-
-      app.currentProject = event.data;
-      event.data.enter();
-      $("#" + event.data.slug + " > .project-name").addClass('hidden');
-      $("#" + event.data.slug).addClass('current');
-      $(this).find('.project-info').removeClass('hidden');
+  this.href = function(event) {
+    return window.open($(this).data('url'));
   }
 
   this.initialize();
@@ -86,9 +45,7 @@ var Project = function(name, url, image, description, tags) {
 
 Project.prototype.events = function() {
     var self = this;
-    this.$container.on('mouseenter', '.project#' + this.slug + ':not(.current)', function() { $(this).find('.project-overlay').removeClass('hidden'); });
-    this.$container.on('mouseleave', '.project#' + this.slug  + ':not(.current)', function() { $(this).find('.project-overlay').addClass('hidden'); });
-    this.$container.on('click', ".project#" + this.slug, this, this.expand);
+    this.$container.on('click', ".project#" + this.slug, this, this.href);
 }
 
 module.exports = Project;
