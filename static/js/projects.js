@@ -19,35 +19,35 @@ Projects = function() {
           'name': 'Climate Relief',
           'url': 'https://act.climaterelief.org/donate/donate_CAdrought/',
           'image': 'static/projects/vattuonet-climate-relief.jpg',
-          'description': 'I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
-          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit']
+          'description': 'The Climate Relief Fund raises funds to support communities around the world devastated by climate disasters. I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
+          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit CRM']
       },
       {
           'name': 'Blinktag',
-          'url': 'http://grh.511contracosta.org',
+          'url': 'http://blinktag.com',
           'image': 'static/projects/vattuonet-blinktag.jpg',
-          'description': 'Worked with the fine folks of <a href=“http://blinktag.com/”>BlinkTag</a> to assist <a href=“http://511cc.org”>511 Contra Costa</a> and the <a href=“http://wcctac.org/”>West Contra Costa Transportation Advisory Committee</a> in improving the technology behind their Guaranteed Ride Home program. Working closely with a program manager, I replaced a set of Google Forms and Spreadsheets with a SPA to more easily manage and sort member registrations and reimbursement submissions.',
-          'tags': ['Django', 'BackboneJS', 'RequireJS', 'Grunt']
+          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I work with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
+          'tags': ['Django', 'Wordpress', 'CSS', 'Backbone', 'RequireJS', 'Grunt']
       },
       {
           'name': 'Float Map',
           'url': 'http://floatmap.us',
           'image': 'static/projects/vattuonet-float.jpg',
-          'description': 'Map that visualizes forecasted changes in extreme weather in the Midwest US. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition',
+          'description': 'Float Map visualizes forecasted changes in extreme weather to show the risks associated with climate change. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition.',
           'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3', 'Grunt']
       },
       {
           'name': 'Connectome',
           'url': 'http://connectome.stanford.edu',
           'image': 'static/projects/vattuonet-connectome.jpg',
-          'description': 'I helped develop an interactive visualization tool that displays collaborations within the autism research network',
+          'description': 'Connectome is an interactive visualization tool that displays collaborations within the autism research network. I helped develop a UI to make collaborations and authors easily searchable and filterable.',
           'tags': ['jQuery', 'D3', 'Parse']
       },
       {
           'name': 'Susannah Conway',
           'url': 'http://susannahconway.com',
           'image': 'static/projects/vattuonet-susannah-conway.jpg',
-          'description': 'Worked closely with a <a href="http://chelseydyer.com/">designer</a> to develop a set of mockups and interactive elements into a custom Wordpress theme for a successful online blog. This project was noteworthy in that it was my first attempt at utilizing the <a href="https://roots.io/sage/">Sage Starter Theme</a> for Wordpress -- I would highly recommend giving it a spin.',
+          'description': 'Susannah Conway is a successful UK-based blogger, photographer, and educator. I helped build out a redesign of her website.',
           'tags': ['Wordpress', 'SCSS', 'jQuery', 'Gulp']
       },
       {
