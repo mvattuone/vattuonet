@@ -110,10 +110,10 @@ header h2 a {
 }
 
 .menu li:after {
-  content: '\\';
+  content: '\/';
   position: absolute;
   color: #111;
-  right: -24px;
+  right: -14px;
   bottom: 2px;
 }
 
