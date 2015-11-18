@@ -435,6 +435,8 @@ header h2 a {
     position: relative;
   }
 
+  .menu li:last-child { margin-right:20px; }
+
   header h2 {
     margin: 0;
     padding: 16px 6px 17px 20px;
