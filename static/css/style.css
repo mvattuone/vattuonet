@@ -113,8 +113,8 @@ header h2 a {
   content: '\\';
   position: absolute;
   color: #111;
-  right: -16px;
-  bottom: 18px;
+  right: -24px;
+  bottom: 2px;
 }
 
 .menu li:last-child:after {
@@ -438,6 +438,8 @@ header h2 a {
   }
 
   .menu li:last-child { margin-right:20px; }
+
+  .menu li:after { right: -16px; bottom: 18px; }
 
   header h2 {
     margin: 0;
