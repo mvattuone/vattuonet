@@ -57,22 +57,24 @@ a {
 }
 
 header {
-  height:10vh;
+  height:15vh;
   display:block;
   width:100%;
   position:relative;
   z-index:7;
+  padding:0;
   transition: all 0.15s ease-in;
   -webkit-transition: all 0.15s ease-in;
   background-color:#fff;
 }
+
 
 header.slideUp { 
   height:0;
 }
 
 .menu {
-  float:right;
+  text-align:center;
 }
 
 ul {
@@ -82,23 +84,23 @@ ul {
 
 .menu li {
   vertical-align: middle;
-    display: inline-block;
-    margin-right: 10px;
-    padding: 27px 3px 17px 0px;
-    font-size: 18px;
-    text-transform: uppercase;
-    letter-spacing: .03em;
-    color: #FFF;
-    font-size: 13px;
-    position: relative;
+  display: inline-block;
+  padding: 0;
+  margin: 0 20px;
+  font-size: 18px;
+  text-transform: uppercase;
+  letter-spacing: .03em;
+  color: #FFF;
+  font-size: 13px;
+  position: relative;
+  text-align: center;
 }
 
 header h2 {
   margin:0;
-  padding: 16px 6px 17px 20px;
-  display:inline-block;
-  letter-spacing: 0;
-  float:left;
+  padding:10px 0;
+  text-align:center;
+  letter-spacing:0;
   text-transform:uppercase;
 }
 
@@ -120,6 +122,8 @@ header h2 a {
   color: #111;
   text-decoration: none;
   position:relative;
+  display:block;
+  text-align:center;
 }
 
 .menu a:hover:before, .menu a:active:before, .menu a:visited:hover:before, .menu a:visited:active:before {
@@ -193,9 +197,9 @@ header h2 a {
 
 .panel { 
     width: 100vw;
-    height:90vh;
+    height:85vh;
     overflow:scroll;
-    top: 10vh;
+    top: 15vh;
     left: 0;
     position: absolute;
     z-index:6;
@@ -249,8 +253,8 @@ header h2 a {
 .main,
 .container {
     width:100%;
-    height:90vh;
-    top:10vh;
+    height:85vh;
+    top:15vh;
     background-color: rgba(255,255,255,1);
 }
 
@@ -288,6 +292,7 @@ header h2 a {
 
 .panel-content {
     clear:both;
+    overflow:scroll;
 }
 
 #projects .panel-wrapper {
@@ -310,39 +315,17 @@ header h2 a {
 .project {
     background-repeat: no-repeat;
     background-position:center center;
+    background-size:100% auto;
     position: relative;
-    width: 50%;
-    height: 720px;
-    float:left;
+    width:auto;
     background-color: rgba(204,152,95,1);
-}
-
-.project.current {
-    position: absolute;
-    left: 50%;
-    width: 70vw;
-    height: 63vh;
-    z-index: 12;
-    margin: 0;
-    top: 50%;
-    margin-left: -35vw;
-    margin-top: -31.5vh;
-}
-
-.project-info {
-    width: 100%;
-    display: inline-block;
-    vertical-align: top;
-    padding: 10px;
-    background-color: #FFF;
-    position: absolute;
-    bottom: 0;
-    left: 0;
+    padding-top:100%;
+    cursor:pointer;
 }
 
 .project-overlay {
   position: absolute;
-  display:table;
+  display:none;
   opacity:0;
   width: 100%;
   height: 100%;
@@ -352,10 +335,6 @@ header h2 a {
   transition: all 0.2s ease-in;
   -webkit-box-sizing:border-box;
   -box-sizing:border-box;
-}
-
-.project:hover .project-overlay {
-  opacity:1;
 }
 
 .project-overlay-inner {
@@ -422,4 +401,70 @@ header h2 a {
   right:20px;
   z-index:10;
   cursor:pointer;
+}
+
+@media all and (min-width: 768px) {
+
+  header {
+    height:10vh;
+    padding:0;
+  }
+
+  .main,
+  .container {
+      width:100%;
+      height:85vh;
+      top:15vh;
+      background-color: rgba(255,255,255,1);
+  }
+
+  .menu {
+    float:right;
+  }
+
+  .menu li {
+    vertical-align: middle;
+    display: inline-block;
+    margin-right: 10px;
+    padding: 27px 3px 17px 0px;
+    font-size: 18px;
+    text-transform: uppercase;
+    letter-spacing: .03em;
+    color: #FFF;
+    font-size: 13px;
+    position: relative;
+  }
+
+  header h2 {
+    margin: 0;
+    padding: 16px 6px 17px 20px;
+    float: left;
+  }
+
+  .project {
+    padding-top:0;
+    width: 50%;
+    float:left;
+    height: 400px;
+    background-size:cover;
+  }
+
+  .project-overlay { 
+    display:table;
+  }
+
+  .project:hover .project-overlay {
+    opacity:1;
+  }
+
+  .panel {
+    height:90vh;
+    top:10vh;
+  }
+}
+
+@media all and (min-width:1024px) {
+  .project {
+    height:720px;
+  }
 }
