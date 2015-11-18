@@ -59,6 +59,8 @@ initScene = function() {
   app.labels = []; 
 
   var labels = app.routes;
+  // Fix for contact
+  labels.push('contact');
   for (i=0; i<labels.length; i++) {
     mesh = buildSphere(16,256,256,labels[i]);
     labelText = mesh.name;

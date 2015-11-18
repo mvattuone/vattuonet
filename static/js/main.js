@@ -63,13 +63,14 @@ onDocumentMouseDown = function(event) {
     Webcam = undefined;
     app.scene = null;
     if (app.sound) { app.sound.source.stop(); }
-    app.sound =
     $('#scene').remove();
     $('header').removeClass('slideUp');
     $('header').children().show();
+    app.currentPanel = panel;
+  } else {
+    return false;
   }
-
-  app.currentPanel = panel;
+  
 };  
 
 initAudio = function() { 
@@ -93,37 +94,42 @@ render = app.render = function() {
 
 checkRoute = function(route) {
 
+  var panel;
+
   if (app.currentPanel) {
     app.currentPanel.exit();
   } 
 
   setTimeout(function() {
-  if ( route === 'blog') {
-      posts = new Posts();
-      posts.fetch();
-      panel = new Panel('blog');
-  }
-  else if (route === 'projects') {
-      projects = new Projects();
-      panel = new Panel('projects', projects);
-  }
-  else if (route === 'about') {
-      panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</h1><h2>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h2>');
-  } else if (route === 'contact') {
-      window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
-      return false;
-  } else {
-      return false;
-  }
+    if ( route === 'blog') {
+        posts = new Posts();
+        posts.fetch();
+        panel = new Panel('blog');
+    }
+    else if (route === 'projects') {
+        projects = new Projects();
+        panel = new Panel('projects', projects);
+    }
+    else if (route === 'about') {
+        panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</h1><h3>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</h3><h3>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h3>');
+    } else if (route === 'contact') {
+        window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
+        panel = false;
+    } else {
+        panel = false;
+    }
 
-  app.currentPanel = panel;
-  }, 0)
+    app.currentPanel = panel;
+    return panel;
+  }, 0);
+
+  return panel;
 
 }
 
 init = function() {    
 
-  app.routes = ['blog', 'projects', 'about'];
+  app.routes = ['projects', 'blog', 'about'];
   
 
   $('#pi').on('click', function() {
@@ -160,7 +166,7 @@ $(document).ready(function() {
   if (window.location.hash.substring(1).length > 0) {
     checkRoute(window.location.hash.substring(1));
   } else {
-    checkRoute('blog');
+    checkRoute('projects');
   }  
 });
 

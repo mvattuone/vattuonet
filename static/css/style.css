@@ -223,11 +223,11 @@ header h2 a {
 }
 
 .panel.current.exit#blog { 
-    transform: translateY(-111%);
+    transform: translateY(111%);
 }
 
 .panel.current.exit#projects {
-    transform: translateY(100%);
+    transform: translateY(-100%);
 }
 
 .panel#about {
@@ -239,11 +239,11 @@ header h2 a {
 }
 
 .panel#blog {
-    transform: translateY(-111%);
+    transform: translateY(111%);
 }
 
 .panel#projects {
-    transform: translateY(100%);
+    transform: translateY(-100%);
 }
 
 .main,
