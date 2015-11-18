@@ -12829,36 +12829,22 @@ onDocumentMouseDown = function(event) {
   var sphere = intersects[0].object.name;
   var panel;
   
-  // TODO: Think through whether this is the right way to do async fetching
-  // See Posts.js
-  if (sphere === 'blog') {
-    posts = new Posts();
-    posts.fetch();
-    panel = new Panel('blog');
-  } else if (sphere === 'contact') {
-    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  } else if (sphere === 'projects') {
-    projects = new Projects();
-    panel = new Panel('projects', projects);
-  } else if (sphere === 'about') {
-    var panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-  } else {
-    return false;
-  }
+  var panel = checkRoute(sphere);
 
-  if (app.scene) {
-    cancelAnimationFrame(app.af);// Stop the animation
+  if (app.scene && panel) {
+    cancelAnimationFrame(app.af); // Stop the animation
     Webcam.stop();
     Webcam = undefined;
     app.scene = null;
     if (app.sound) { app.sound.source.stop(); }
-    app.sound =
     $('#scene').remove();
     $('header').removeClass('slideUp');
     $('header').children().show();
+    app.currentPanel = panel;
+  } else {
+    return false;
   }
-
-  app.currentPanel = panel;
+  
 };  
 
 initAudio = function() { 
@@ -12882,37 +12868,42 @@ render = app.render = function() {
 
 checkRoute = function(route) {
 
+  var panel;
+
   if (app.currentPanel) {
     app.currentPanel.exit();
   } 
 
   setTimeout(function() {
-  if ( route === 'blog') {
-      posts = new Posts();
-      posts.fetch();
-      panel = new Panel('blog');
-  }
-  else if (route === 'contact') {
-    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
-  else if (route === 'projects') {
-      projects = new Projects();
-      panel = new Panel('projects', projects);
-  }
-  else if (route === 'about') {
-      panel = new Panel('about', '<p>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</p>');
-  } else {
-      return false;
-  }
+    if ( route === 'blog') {
+        posts = new Posts();
+        posts.fetch();
+        panel = new Panel('blog');
+    }
+    else if (route === 'projects') {
+        projects = new Projects();
+        panel = new Panel('projects', projects);
+    }
+    else if (route === 'about') {
+        panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</h1><h3>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</h3><h3>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h3>');
+    } else if (route === 'contact') {
+        window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
+        panel = false;
+    } else {
+        panel = false;
+    }
 
-  app.currentPanel = panel;
-  }, 0)
+    app.currentPanel = panel;
+    return panel;
+  }, 0);
+
+  return panel;
 
 }
 
 init = function() {    
 
-  app.routes = ['blog', 'projects', 'contact', 'about'];
+  app.routes = ['projects', 'blog', 'about'];
   
 
   $('#pi').on('click', function() {
@@ -12949,7 +12940,7 @@ $(document).ready(function() {
   if (window.location.hash.substring(1).length > 0) {
     checkRoute(window.location.hash.substring(1));
   } else {
-    checkRoute('blog');
+    checkRoute('projects');
   }  
 });
 
@@ -13133,49 +13124,8 @@ var Project = function(name, url, image, description, tags) {
     return name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-');
   }
 
-  this.enter = function(event) {
-      if (event) {
-          event.currentTarget.$html.addClass('enter');
-      } else {
-          $("#" + this.slug).addClass('enter');      
-      }
-      return this;
-  }
-
-  this.exit = function(event) {
-      if (event) {
-          event.currentTarget.$html.addClass('exit');
-      } else {
-          $("#" + this.slug).addClass('exit');    
-      }
-      $("#" + this.slug).find('.project-info').addClass('hidden');
-      $('.project.current').removeClass('current').removeClass('exit');
-      return this;
-  }
-
-  this.destroy = function(event) {
-        var $el = $('.project.current.exit');
-        if ($el.length <= 0) { return false; };
-        $el.remove();
-        return this;
-  };
-
-  this.expand = function(event) {
-      if (app.currentProject) {
-
-          if (app.currentProject === event.data) {
-              app.currentProject.exit();
-              return false;
-          }
-
-          app.currentProject.exit();
-      }
-
-      app.currentProject = event.data;
-      event.data.enter();
-      $("#" + event.data.slug + " > .project-name").addClass('hidden');
-      $("#" + event.data.slug).addClass('current');
-      $(this).find('.project-info').removeClass('hidden');
+  this.href = function(event) {
+    return window.open($(this).data('url'));
   }
 
   this.initialize();
@@ -13183,9 +13133,7 @@ var Project = function(name, url, image, description, tags) {
 
 Project.prototype.events = function() {
     var self = this;
-    this.$container.on('mouseenter', '.project#' + this.slug + ':not(.current)', function() { $(this).find('.project-overlay').removeClass('hidden'); });
-    this.$container.on('mouseleave', '.project#' + this.slug  + ':not(.current)', function() { $(this).find('.project-overlay').addClass('hidden'); });
-    this.$container.on('click', ".project#" + this.slug, this, this.expand);
+    this.$container.on('click', ".project#" + this.slug, this, this.href);
 }
 
 module.exports = Project;
@@ -13211,35 +13159,35 @@ Projects = function() {
           'name': 'Climate Relief',
           'url': 'https://act.climaterelief.org/donate/donate_CAdrought/',
           'image': 'static/projects/vattuonet-climate-relief.jpg',
-          'description': 'I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
-          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit']
+          'description': 'The Climate Relief Fund raises funds to support communities around the world devastated by climate disasters. I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
+          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit CRM']
       },
       {
           'name': 'Blinktag',
-          'url': 'http://grh.511contracosta.org',
+          'url': 'http://blinktag.com',
           'image': 'static/projects/vattuonet-blinktag.jpg',
-          'description': 'Worked with the fine folks of <a href=“http://blinktag.com/”>BlinkTag</a> to assist <a href=“http://511cc.org”>511 Contra Costa</a> and the <a href=“http://wcctac.org/”>West Contra Costa Transportation Advisory Committee</a> in improving the technology behind their Guaranteed Ride Home program. Working closely with a program manager, I replaced a set of Google Forms and Spreadsheets with a SPA to more easily manage and sort member registrations and reimbursement submissions.',
-          'tags': ['Django', 'BackboneJS', 'RequireJS', 'Grunt']
+          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I work with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
+          'tags': ['Django', 'Wordpress', 'CSS', 'Backbone', 'RequireJS', 'Grunt']
       },
       {
           'name': 'Float Map',
           'url': 'http://floatmap.us',
           'image': 'static/projects/vattuonet-float.jpg',
-          'description': 'Map that visualizes forecasted changes in extreme weather in the Midwest US. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition',
+          'description': 'Float Map visualizes forecasted changes in extreme weather to show the risks associated with climate change. Recieved the Judges’ Choice and Popular Choice awards in the 2014 MIT Climate Colab competition.',
           'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3', 'Grunt']
       },
       {
           'name': 'Connectome',
           'url': 'http://connectome.stanford.edu',
           'image': 'static/projects/vattuonet-connectome.jpg',
-          'description': 'I helped develop an interactive visualization tool that displays collaborations within the autism research network',
+          'description': 'Connectome is an interactive visualization tool that displays collaborations within the autism research network. I helped develop a UI to make collaborations and authors easily searchable and filterable.',
           'tags': ['jQuery', 'D3', 'Parse']
       },
       {
           'name': 'Susannah Conway',
           'url': 'http://susannahconway.com',
           'image': 'static/projects/vattuonet-susannah-conway.jpg',
-          'description': 'Worked closely with a <a href="http://chelseydyer.com/">designer</a> to develop a set of mockups and interactive elements into a custom Wordpress theme for a successful online blog. This project was noteworthy in that it was my first attempt at utilizing the <a href="https://roots.io/sage/">Sage Starter Theme</a> for Wordpress -- I would highly recommend giving it a spin.',
+          'description': 'Susannah Conway is a successful UK-based blogger, photographer, and educator. I helped build out a redesign of her website.',
           'tags': ['Wordpress', 'SCSS', 'jQuery', 'Gulp']
       },
       {
@@ -13336,6 +13284,8 @@ initScene = function() {
   app.labels = []; 
 
   var labels = app.routes;
+  // Fix for contact
+  labels.push('contact');
   for (i=0; i<labels.length; i++) {
     mesh = buildSphere(16,256,256,labels[i]);
     labelText = mesh.name;

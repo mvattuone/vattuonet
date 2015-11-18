@@ -110,8 +110,11 @@ header h2 a {
 }
 
 .menu li:after {
-  content: "\\";
-  margin-left:17px;
+  content: '\\';
+  position: absolute;
+  color: #111;
+  right: -16px;
+  bottom: 18px;
 }
 
 .menu li:last-child:after {
@@ -140,14 +143,13 @@ header h2 a {
   bottom: 0;
   left: 0px;
   top: 22px;
-  background-color: #FFF;
+  background-color: #111;
   visibility: hidden;
   -webkit-transform: scaleX(0);
   transform: scaleX(0);
   -webkit-transition: all 0.15s ease-in-out 0s;
   -moz-transition: all 0.15s ease-in-out 0s;
   transition: all 0.15s ease-in-out 0s;
-  box-shadow: 0px 1px 1px rgba(42,98,141,0.6);
 }
 
 .menu li a:hover,
