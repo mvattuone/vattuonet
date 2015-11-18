@@ -55,23 +55,10 @@ onDocumentMouseDown = function(event) {
   var sphere = intersects[0].object.name;
   var panel;
   
-  // TODO: Think through whether this is the right way to do async fetching
-  // See Posts.js
-  if (sphere === 'blog') {
-    posts = new Posts();
-    posts.fetch();
-    panel = new Panel('blog');
-  } else if (sphere === 'projects') {
-    projects = new Projects();
-    panel = new Panel('projects', projects);
-  } else if (sphere === 'about') {
-    var panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</p><p>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h1>');
-  } else {
-    return false;
-  }
+  var panel = checkRoute(sphere);
 
-  if (app.scene) {
-    cancelAnimationFrame(app.af);// Stop the animation
+  if (app.scene && panel) {
+    cancelAnimationFrame(app.af); // Stop the animation
     Webcam.stop();
     Webcam = undefined;
     app.scene = null;
@@ -122,6 +109,9 @@ checkRoute = function(route) {
   }
   else if (route === 'about') {
       panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</h1><h2>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</p><p>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h2>');
+  } else if (route === 'contact') {
+      window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
+      return false;
   } else {
       return false;
   }
