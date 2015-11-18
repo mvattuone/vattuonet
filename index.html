@@ -22,7 +22,7 @@
   </div>
 
   <header>
-    <h1><a href="#blog">Vattuonet</a></h1>
+    <h2><a href="#blog">Vattuonet</a></h2>
     <nav class="menu">      
       <ul>
         <li><a href="#blog">Blog</a></li>
@@ -46,19 +46,17 @@
 
   <script type="text/template" id="projectTemplate">
     <div class="project" id="<%= slug %>" style="background-image: url(<%= image %>);">
-      <h3 class="project-name hidden"><%= name %></h3>
-      <div class="project-info hidden">
-        <h3 class="project-name"><%= name %></h3>
-        <div class="project-description">
-          <p><%= description %></p>
-        </div>
-        <div class="tags">
-          <ul>
-            <% _.each(tags, function(tag) { %> <li class="tag"> <%= tag %> </li> <% }); %>
-          </ul>
-        </div>
-        <a class="button" href="<%= url %>">Visit Site</a>
-      </div>
+        <div class="project-overlay hidden" data-url="<%= url %>">
+          <div class="project-overlay-inner">
+            <h1><%= name %></h1>          
+            <p><%= description %></p>
+            <div class="tags">
+              <ul>
+                <% _.each(tags, function(tag) { %> <li class="tag"> <%= tag %> </li> <% }); %>
+              </ul>
+            </div>
+          </div>
+        </div>  
     </div>
   </script>
   

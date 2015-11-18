@@ -54,7 +54,6 @@ p, span, li {
 
 a {
   color: rgba(6, 62, 99, 1);
-  text-shadow: 0 0 0;
 }
 
 header {
@@ -65,11 +64,7 @@ header {
   z-index:7;
   transition: all 0.15s ease-in;
   -webkit-transition: all 0.15s ease-in;
-  background-color: rgba(2,164,211,1);   
-}
-
-header h1 a {
-  background-color: rgba(2,164,211,0.6);   
+/*  background-color: rgba(2,164,211,1);   */
 }
 
 header.slideUp { 
@@ -98,19 +93,17 @@ ul {
     position: relative;
 }
 
-header h1 {
-  font-size:36px;
+header h2 {
   margin:0;
-  padding: 12px 6px 17px 20px;
-  color: #FFF;
+  padding: 16px 6px 17px 20px;
   display:inline-block;
   letter-spacing: 0;
   float:left;
   text-transform:uppercase;
 }
 
-header h1 a {
-  color:#FFF;
+header h2 a {
+  color:#111;
   text-decoration: none;
 }
 
@@ -124,7 +117,7 @@ header h1 a {
 }
 
 .menu li a {
-  color: #FFF;
+  color: #111;
   text-decoration: none;
   position:relative;
 }
@@ -289,6 +282,7 @@ header h1 a {
 
 .hidden {
   visibility: hidden;
+  opacity:0;
   position:absolute;
   top:0; left:0;
 }
@@ -316,12 +310,12 @@ header h1 a {
 
 .project {
     background-repeat: no-repeat;
+    background-position:center center;
     position: relative;
-    width: 33.33333%;
-    height: 30vh;
-    display: inline-block;
-    background-size: cover;
-    float: left;
+    width: 50%;
+    height: 720px;
+    float:left;
+    background-color: rgba(204,152,95,1);
 }
 
 .project.current {
@@ -347,27 +341,31 @@ header h1 a {
     left: 0;
 }
 
-.project-name {
-  margin-top: 0;
-  font-weight: normal;
-  text-transform: uppercase;
-  position: absolute;
-  top: 71px;
-  display: block;
-  width: 100%;
-  text-align: center;
-  transition: all 0.2s ease-in;
-}
-
-.project-name:before {
+.project-overlay {
   content: "";
   position: absolute;
-  display: block;
-  width: 340px;
-  height: 161px;
-  background-color: rgba(0,0,0,0.2);
-  margin-top: -71px;
+  display: table;
+  width: 100%;
+  height: 100%;
+  padding:0 50px;
+  background-color: rgba(0,0,0,0.6);
+  text-shadow: 0px 0px 1px rgba(0, 0, 0, 1);
+  transition: all 0.2s ease-in;
+  -webkit-box-sizing:border-box;
+  -box-sizing:border-box;
 }
+
+.project-overlay-inner {
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.project-overlay h1, .project-overlay p, .project-overlay a, .tags {
+  color: #FFF;
+}
+
+.project-overlay h1 { font-size: 36px; margin:0; }
 
 .project.current .project-name {
   text-align:left;

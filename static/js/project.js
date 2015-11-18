@@ -56,31 +56,38 @@ var Project = function(name, url, image, description, tags) {
       return this;
   }
 
-    this.expand = function(event) {
-        if (app.currentProject) {
+  this.destroy = function(event) {
+        var $el = $('.project.current.exit');
+        if ($el.length <= 0) { return false; };
+        $el.remove();
+        return this;
+  };
 
-            if (app.currentProject === event.data) {
-                app.currentProject.exit();
-                return false;
-            }
+  this.expand = function(event) {
+      if (app.currentProject) {
 
-            app.currentProject.exit();
-        }
+          if (app.currentProject === event.data) {
+              app.currentProject.exit();
+              return false;
+          }
 
-        app.currentProject = event.data;
-        event.data.enter();
-        $("#" + event.data.slug + " > .project-name").addClass('hidden');
-        $("#" + event.data.slug).addClass('current');
-        $(this).find('.project-info').removeClass('hidden');
-    }
+          app.currentProject.exit();
+      }
+
+      app.currentProject = event.data;
+      event.data.enter();
+      $("#" + event.data.slug + " > .project-name").addClass('hidden');
+      $("#" + event.data.slug).addClass('current');
+      $(this).find('.project-info').removeClass('hidden');
+  }
 
   this.initialize();
 }
 
 Project.prototype.events = function() {
     var self = this;
-    this.$container.on('mouseenter', '.project#' + this.slug + ':not(.current)', function() { $(this).find('.project-name').removeClass('hidden'); });
-    this.$container.on('mouseleave', '.project#' + this.slug  + ':not(.current)', function() { $(this).find('.project-name').addClass('hidden'); });
+    this.$container.on('mouseenter', '.project#' + this.slug + ':not(.current)', function() { $(this).find('.project-overlay').removeClass('hidden'); });
+    this.$container.on('mouseleave', '.project#' + this.slug  + ':not(.current)', function() { $(this).find('.project-overlay').addClass('hidden'); });
     this.$container.on('click', ".project#" + this.slug, this, this.expand);
 }
 
