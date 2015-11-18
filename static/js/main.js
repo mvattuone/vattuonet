@@ -61,8 +61,6 @@ onDocumentMouseDown = function(event) {
     posts = new Posts();
     posts.fetch();
     panel = new Panel('blog');
-  } else if (sphere === 'contact') {
-    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
   } else if (sphere === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
@@ -118,9 +116,6 @@ checkRoute = function(route) {
       posts.fetch();
       panel = new Panel('blog');
   }
-  else if (route === 'contact') {
-    panel = new Panel('contact', '<p>Email me at mike@vattuo.net -- I\'\d be down to grab a coffee or something.</p>');
-  }
   else if (route === 'projects') {
       projects = new Projects();
       panel = new Panel('projects', projects);
@@ -138,7 +133,7 @@ checkRoute = function(route) {
 
 init = function() {    
 
-  app.routes = ['blog', 'projects', 'contact', 'about'];
+  app.routes = ['blog', 'projects', 'about'];
   
 
   $('#pi').on('click', function() {
