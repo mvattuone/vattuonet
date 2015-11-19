@@ -111,7 +111,7 @@ checkRoute = function(route) {
         panel = new Panel('projects', projects);
     }
     else if (route === 'about') {
-        panel = new Panel('about', '<h1>My name is Mike, and I do stuff on the Internet.</h1><h3>I have worked on many different layers of the stack, but my love is creating interesting and unique experiences.I enjoy working with bleeding-edge technologies, but I’m not afraid to utilize a polyfill for IE8 when the analytics call for it.</h3><h3>I like to have discussions about technology — problems solving is fun, but asking deep questions before attempting to solve the problem is funner.</h3>');
+        panel = new Panel('about', "<h1>My name is Mike, and I make stuff on the Internet.</h1><h3>I have a deep interest in front-end development, particularly data visualization, geospatial mapping, and the evolution of Javascript and the browser. I also enjoy using Python when I need to do anything back-end related. I also really like making clients happy.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
     } else if (route === 'contact') {
         window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
         panel = false;
