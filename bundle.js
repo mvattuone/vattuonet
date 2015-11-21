@@ -12827,20 +12827,22 @@ onDocumentMouseDown = function(event) {
   // we could probably just create a function that looks at the UserData property
   // and addClass that way.
   var sphere = intersects[0].object.name;
-  var panel;
   
-  var panel = checkRoute(sphere);
+  checkRoute(sphere);
 
   if (app.scene && panel) {
     cancelAnimationFrame(app.af); // Stop the animation
     Webcam.stop();
     Webcam = undefined;
     app.scene = null;
-    if (app.sound) { app.sound.source.stop(); }
     $('#scene').remove();
     $('header').removeClass('slideUp');
     $('header').children().show();
-    app.currentPanel = panel;
+    // TODO: Let's use promises to resolve this stuff more logically.
+    // Currently we are trying to avoid a race condition.
+    setTimeout(function() {
+      app.sound.source.stop();  
+    }, 500)
   } else {
     return false;
   }
@@ -12872,33 +12874,27 @@ checkRoute = function(route) {
 
   if (app.currentPanel) {
     app.currentPanel.exit();
+    app.currentPanel = null;
   } 
 
-  setTimeout(function() {
-    if ( route === 'blog') {
-        posts = new Posts();
-        posts.fetch();
-        panel = new Panel('blog');
-    }
-    else if (route === 'projects') {
-        projects = new Projects();
-        panel = new Panel('projects', projects);
-    }
-    else if (route === 'about') {
-        panel = new Panel('about', "<h1>My name is Mike, and I make stuff on the Internet.</h1><h3>I have a deep interest in front-end development, particularly data visualization, geospatial mapping, and the evolution of Javascript and the browser. I also enjoy using Python when I need to do anything back-end related. I also really like making clients happy.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
-    } else if (route === 'contact') {
-        window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
-        panel = false;
-    } else {
-        panel = false;
-    }
+  if ( route === 'blog') {
+    posts = new Posts();
+    posts.fetch();
+    panel = new Panel('blog');
+  } else if (route === 'projects') {
+    projects = new Projects();
+    panel = new Panel('projects', projects);
+  } else if (route === 'about') {
+    panel = new Panel('about', "<h1>My name is Mike, and I make stuff on the Internet.</h1><h3>I have a deep interest in front-end development, particularly data visualization, geospatial mapping, and the evolution of Javascript and the browser. I also enjoy using Python when I need to do anything back-end related. I also really like making clients happy.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
+  } else if (route === 'contact') {
+    window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
+    panel = false;
+  } else {
+    panel = false;
+  }
 
-    app.currentPanel = panel;
-    return panel;
-  }, 0);
-
+  app.currentPanel = panel;
   return panel;
-
 }
 
 init = function() {    
@@ -12907,6 +12903,7 @@ init = function() {
   
 
   $('#pi').on('click', function() {
+    
     app.currentPanel.exit();
     app.currentPanel.$container.css('background-color', 'transparent');
     
@@ -12932,6 +12929,7 @@ init = function() {
 
 $(document).ready(function() {
   init();
+  var panel;
 
   $(window).on('hashchange', function(event) {
     checkRoute(window.location.hash.substring(1));
@@ -12942,6 +12940,7 @@ $(document).ready(function() {
   } else {
     checkRoute('projects');
   }  
+
 });
 
 
@@ -12970,6 +12969,8 @@ var Panel = function(name, content) {
 
         this.events();
         this.render();
+
+        return this;
     };
 
     this.render = function(event) {
@@ -13017,6 +13018,7 @@ var Panel = function(name, content) {
 
     // create our Panel
     this.initialize();
+    return this;
 }
 
 

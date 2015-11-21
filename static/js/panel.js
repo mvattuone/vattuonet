@@ -22,6 +22,8 @@ var Panel = function(name, content) {
 
         this.events();
         this.render();
+
+        return this;
     };
 
     this.render = function(event) {
@@ -69,6 +71,7 @@ var Panel = function(name, content) {
 
     // create our Panel
     this.initialize();
+    return this;
 }
 
 
