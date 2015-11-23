@@ -26,7 +26,7 @@ Projects = function() {
           'name': 'Blinktag',
           'url': 'http://blinktag.com',
           'image': 'static/projects/vattuonet-blinktag.jpg',
-          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I work with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
+          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I worked with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
           'tags': ['Django', 'Wordpress', 'CSS', 'Backbone', 'RequireJS', 'Grunt']
       },
       {
