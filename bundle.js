@@ -12851,11 +12851,8 @@ onDocumentMouseDown = function(event) {
 
 initAudio = function() { 
   // Web Audio API stuff
+  // Someday the fun zone should have some fallbacks
   window.AudioContext = ( window.AudioContext || window.webkitAudioContext || null );
-
-  if (!AudioContext) {
-    // fallback
-}
 };
 
 /* Main Render Loop */
@@ -12885,7 +12882,7 @@ checkRoute = function(route) {
     projects = new Projects();
     panel = new Panel('projects', projects);
   } else if (route === 'about') {
-    panel = new Panel('about', "<h1>My name is Mike, and I make stuff on the Internet.</h1><h3>I have a deep interest in front-end development, particularly data visualization, geospatial mapping, and the evolution of Javascript and the browser. I also enjoy using Python when I need to do anything back-end related. I also really like making clients happy.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
+    panel = new Panel('about', "<h3>My name is Mike Vattuone. I am a musician and full stack web developer living in Brooklyn, New York, currently working on a mix of freelance and personal projects.</h3><h3>I am particularly interested in data visualization, cognitive science, and the evolution of the browser and personal computing over time, especially with regard to its cultural effects on things like media consumption, education, and civic engagement. You can get a better sense of my skill set by looking at my <a href='/resume-vattuone.pdf'>resume</a> and my <a href='#projects'>projects</a>.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
   } else if (route === 'contact') {
     window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
     panel = false;
@@ -13168,7 +13165,7 @@ Projects = function() {
           'name': 'Blinktag',
           'url': 'http://blinktag.com',
           'image': 'static/projects/vattuonet-blinktag.jpg',
-          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I work with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
+          'description': 'BlinkTag makes technology easy for city and transportation planning professionals. I worked with them on various web development projects, including an overhaul of a Guaranteed Ride Home program for Contra Costa County.',
           'tags': ['Django', 'Wordpress', 'CSS', 'Backbone', 'RequireJS', 'Grunt']
       },
       {
