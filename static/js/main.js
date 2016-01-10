@@ -108,7 +108,7 @@ checkRoute = function(route) {
     projects = new Projects();
     panel = new Panel('projects', projects);
   } else if (route === 'about') {
-    panel = new Panel('about', "<h3>My name is Mike Vattuone. I am a musician and full stack web developer living in Brooklyn, New York, currently working on a mix of freelance and personal projects.</h3><h3>I am particularly interested in data visualization, cognitive science, and the evolution of the browser and personal computing over time, especially with regard to its cultural effects on things like media consumption, education, and civic engagement. You can get a better sense of my skill set by looking at my <a href='/resume-vattuone.pdf'>resume</a> and my <a href='#projects'>projects</a>.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
+    panel = new Panel('about', "<h3>My name is Mike Vattuone. I am a musician and full stack web developer living in Brooklyn, New York, currently working at Condé Nast.</h3><h3>I am particularly interested in data visualization, cognitive science, and the evolution of the browser and personal computing over time, especially with regard to its cultural effects on things like media consumption, education, and civic engagement. You can get a better sense of my skill set by looking at my <a href='/resume-vattuone.pdf'>resume</a> and my <a href='#projects'>projects</a>.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
   } else if (route === 'contact') {
     window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
     panel = false;
