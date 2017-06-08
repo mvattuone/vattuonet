@@ -9,7 +9,7 @@ var Posts = function() {
         if (!self.data) {
             var $tumblrAPI = $("<script />"),
             tumblrAPI = $tumblrAPI[0];
-            tumblrAPI.src = 'http://vattuonet.tumblr.com/api/read/json';
+            tumblrAPI.src = 'https://vattuonet.tumblr.com/api/read/json';
             document.head.appendChild(tumblrAPI);
 
             $tumblrAPI.on('load', function(e) {
@@ -31,7 +31,7 @@ var Posts = function() {
                 posts.push(post.html);
             }
         }
-        
+
         var html = posts.join("");
 
         if (panel) {
