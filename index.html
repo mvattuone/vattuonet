@@ -45,18 +45,20 @@
   <script src="/bundle.js"></script>
 
   <script type="text/template" id="projectTemplate">
-    <div class="project" id="<%= slug %>" style="background-image: url(<%= image %>);" data-url="<%= url %>">
-        <div class="project-overlay">
-          <div class="project-overlay-inner">
-            <h1><%= name %></h1>          
-            <p><%= description %></p>
-            <div class="tags">
-              <ul>
-                <% _.each(tags, function(tag) { %> <li class="tag"> <%= tag %> </li> <% }); %>
-              </ul>
+    <div class="project" id="<%= slug %>" style="background-image: url(<%= image %>);">
+        <a href="<%= url %>">
+          <div class="project-overlay">
+            <div class="project-overlay-inner">
+              <h1><%= name %></h1>          
+              <p><%= description %></p>
+              <div class="tags">
+                <ul>
+                  <% _.each(tags, function(tag) { %> <li class="tag"> <%= tag %> </li> <% }); %>
+                </ul>
+              </div>
             </div>
-          </div>
-        </div>  
+          </div>  
+        </a>
     </div>
   </script>
   

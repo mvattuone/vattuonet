@@ -30,11 +30,14 @@ embossTransform = function(data, imageData) {
 var WebcamTexture = {
   initialize: function() { 
     this.source = Webcam.output,
-    this.canvas = $('<canvas />', { id: 'canvas', width: 1024, height: 1024})[0],
+    this.canvas = document.createElement('canvas');
+    this.canvas.id = 'canvas';
+    this.canvas.width = 1024;
+    this.canvas.height = 1024;
     this.ctx = this.canvas.getContext('2d');
-
     this.texture = new THREE.Texture(this.canvas);
     this.texture.minFilter = THREE.LinearFilter;
+
     return this.texture;
   },
   transform: function(transformType, data, imageData) {

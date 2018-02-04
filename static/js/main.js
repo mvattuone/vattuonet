@@ -11,9 +11,8 @@ app = {};
 
 // Imports
 // NPM modules
-$ = require('jquery');
 _ = require('underscore');
-THREE = require('threejs-build');
+THREE = require('three');
 helvetiker = require('three.regular.helvetiker');
 StackBlur = require('stackblur-canvas');
 Spinner = require('spin.js');
@@ -28,9 +27,9 @@ Panel = require('./panel');
 THREE.typeface_js.loadFace(helvetiker);
 
 createSpinner = function() {
-  $('body').addClass('loading');
+  document.body.classList.add('loading');
   var opts = {lines: 9 ,length: 28,width: 16,radius: 42,scale: 0.75,corners: 1,color: '#000',opacity: 0.25,rotate: 30,direction: 1,speed: 1,trail: 60,fps: 20,zIndex: 2e9,className: 'spinner',top: '50%',left: '50%',shadow: false,hwaccel: true }
-  app.target = $('.spinner')[0];
+  app.target = document.querySelectorAll('#spinner')[0];
   app.spinner = new Spinner(opts).spin(app.target);
 };
 
@@ -57,13 +56,14 @@ onDocumentMouseDown = function(event) {
   checkRoute(sphere);
 
   if (app.scene && panel) {
+    var header = document.querySelector('header');
     cancelAnimationFrame(app.af); // Stop the animation
     Webcam.stop();
     Webcam = undefined;
     app.scene = null;
-    $('#scene').remove();
-    $('header').removeClass('slideUp');
-    $('header').children().show();
+    document.querySelector('#scene').removeChild();
+    header.classList.remove('slideUp');
+    header.children().show();
     // TODO: Let's use promises to resolve this stuff more logically.
     // Currently we are trying to avoid a race condition.
     setTimeout(function() {
@@ -125,36 +125,37 @@ init = function() {
   app.routes = ['projects', 'blog', 'about'];
   
 
-  $('#pi').on('click', function() {
+  document.querySelector('#pi').addEventListener('click', function() {
     
     app.currentPanel.exit();
-    app.currentPanel.$container.css('background-color', 'transparent');
+    app.currentPanel.container.style.backgroundColor = 'transparent';
     
     var loadScene = function() {
       initAudio();
       var Scene = require('./scene');
       Scene.create();
-      $('.spinner-wrapper').unbind('transitionend');
+      document.querySelector('.spinner-wrapper').removeEventListener('transitionend', loadScene);
     }
 
     setTimeout(function() {
       app.currentPanel.destroy();
       createSpinner(); 
-      $('.spinner-wrapper').on('transitionend', loadScene);
+      document.querySelector('.spinner-wrapper').addEventListener('transitionend', loadScene);
     }, 100);
     
 
-    $('header').addClass('slideUp');
-    $('header').children().hide();
+    var header = document.querySelector('header');
+    header.classList.add('slideUp');
+    header.style.visibility = 'hidden';
   
   });
 }
 
-$(document).ready(function() {
+document.addEventListener('DOMContentLoaded', function() {
   init();
   var panel;
 
-  $(window).on('hashchange', function(event) {
+  window.addEventListener('hashchange', function(event) {
     checkRoute(window.location.hash.substring(1));
   })
 

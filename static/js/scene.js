@@ -1,6 +1,7 @@
 revealScene = function(event) { 
   app.spinner.stop();
-  $('body').removeClass('loading');
+  document.body.classList.remove('loading');
+  document.body.classList.remove('srp');
 };
 
 buildSphere = function(radius,widthSegments,heightSegments,name) {
@@ -108,8 +109,9 @@ initScene = function() {
   app.camControls = new VattuonetControls(app.camera);
   app.camControls.initialize(app.camera);
 
-  $('#scene').on('mousedown', onDocumentMouseDown);
-  $('#scene').on('touchstart', onDocumentTouchStart);
+  var scene = document.querySelector('#scene');
+  scene.addEventListener('mousedown', onDocumentMouseDown);
+  scene.addEventListener('touchstart', onDocumentTouchStart);
 
   render();
 

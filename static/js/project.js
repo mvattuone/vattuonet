@@ -6,11 +6,9 @@ var Project = function(name, url, image, description, tags) {
   this.image = image;
   this.description = description;
   this.tags = tags;
-  this.container = '.container'
-  this.$container = $(this.container);
-
+  this.container = document.querySelector('.container');
   this.template = _.template(
-    $( "script#projectTemplate" ).html()
+    document.querySelector("script#projectTemplate" ).innerHTML
   ); 
 
   this.initialize = function() {
@@ -25,27 +23,13 @@ var Project = function(name, url, image, description, tags) {
       description: this.description,
       tags: this.tags
     });
-
-    this.$html = $(this.html);
-
-    this.events();
-
   };
 
   this.slugify = function(name) {
     return name.toLowerCase().replace(/[^\w ]+/g,'').replace(/ +/g,'-');
   }
 
-  this.href = function(event) {
-    return window.open($(this).data('url'));
-  }
-
   this.initialize();
-}
-
-Project.prototype.events = function() {
-    var self = this;
-    this.$container.on('click', ".project#" + this.slug, this, this.href);
 }
 
 module.exports = Project;

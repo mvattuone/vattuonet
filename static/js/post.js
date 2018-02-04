@@ -3,7 +3,7 @@ Post = function(title,body) {
   this.title = title;
   this.body = body;
 
-  this.template = _.template($("script#postTemplate").html());
+  this.template = _.template(document.querySelector("script#postTemplate").innerHTML);
 
   this.initialize = function() {
     this.html = this.template({

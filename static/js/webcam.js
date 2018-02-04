@@ -3,7 +3,7 @@
 var Webcam = function() {
   var self = this;
   
-  this.output = $('#video')[0];
+  this.output = document.querySelector('#video');
 
   this.stop = function() {
     self.stream.getVideoTracks()[0].stop()
