@@ -7,12 +7,11 @@ var Posts = function() {
         var self = this;
 
         if (!self.data) {
-            var $tumblrAPI = $("<script />"),
-            tumblrAPI = $tumblrAPI[0];
+            var tumblrAPI = document.createElement('script');
             tumblrAPI.src = 'https://vattuonet.tumblr.com/api/read/json';
             document.head.appendChild(tumblrAPI);
 
-            $tumblrAPI.on('load', function(e) {
+            tumblrAPI.addEventListener('load', function(e) {
                 self.data = window.tumblr_api_read.posts;
                 self.dispatch(app.currentPanel);
             });
@@ -35,7 +34,7 @@ var Posts = function() {
         var html = posts.join("");
 
         if (panel) {
-            panel.$el.find('.panel-wrapper').append(html);
+            panel.el.children[0].innerHTML = html;
         }
 
         return html;
