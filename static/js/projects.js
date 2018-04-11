@@ -16,13 +16,6 @@ Projects = function() {
 
   this.data = [
       {
-          'name': 'Climate Relief',
-          'url': 'https://act.climaterelief.org/donate/donate_CAdrought/',
-          'image': 'static/projects/vattuonet-climate-relief.jpg',
-          'description': 'The Climate Relief Fund raises funds to support communities around the world devastated by climate disasters. I built a reusable ATM-style donation page meant to integrate with the Actionkit CRM.',
-          'tags': ['Django', 'LESS', 'jQuery', 'Actionkit CRM']
-      },
-      {
           'name': 'Blinktag',
           'url': 'http://blinktag.com',
           'image': 'static/projects/vattuonet-blinktag.jpg',
@@ -37,25 +30,11 @@ Projects = function() {
           'tags': ['Django', 'BackboneJS', 'Coffeescript', 'D3', 'Grunt']
       },
       {
-          'name': 'Connectome',
-          'url': 'http://connectome.stanford.edu',
-          'image': 'static/projects/vattuonet-connectome.jpg',
-          'description': 'Connectome is an interactive visualization tool that displays collaborations within the autism research network. I helped develop a UI to make collaborations and authors easily searchable and filterable.',
-          'tags': ['jQuery', 'D3', 'Parse']
-      },
-      {
           'name': 'Susannah Conway',
           'url': 'http://susannahconway.com',
           'image': 'static/projects/vattuonet-susannah-conway.jpg',
           'description': 'Susannah Conway is a successful UK-based blogger, photographer, and educator. I helped build out a redesign of her website.',
           'tags': ['Wordpress', 'SCSS', 'jQuery', 'Gulp']
-      },
-      {
-          'name': 'Fogcutter',
-          'url': 'http://fogcutter-sf.com',
-          'image': 'static/projects/vattuonet-fogcutter.jpg',
-          'description': 'Fogcutter is an excellent catering service whose goal is to provide "unique, eclectic, and inspired food to the San Francisco Bay Area." Believe me, they do not disappoint.',
-          'tags': ['Wordpress']
       }
   ];
 
