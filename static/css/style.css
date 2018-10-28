@@ -409,7 +409,7 @@ header h2 a {
 @media all and (min-width: 768px) {
 
   header {
-    height:10vh;
+    height:70px;
     padding:0;
   }
 
@@ -465,7 +465,7 @@ header h2 a {
 
   .panel {
     height:90vh;
-    top:10vh;
+    top:70px;
   }
 }
 
