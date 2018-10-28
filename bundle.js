@@ -49908,28 +49908,6 @@ module.exports = {"glyphs":{"ο":{"x_min":0,"x_max":712,"ha":815,"o":"m 356 -25 
 }.call(this));
 
 },{}],6:[function(require,module,exports){
-
-Post = function(title,body) {
-  this.title = title;
-  this.body = body;
-
-  this.template = _.template(document.querySelector("script#postTemplate").innerHTML);
-
-  this.initialize = function() {
-    this.html = this.template({
-      title: this.title,
-      body: this.body
-    });
-    return this.html;
-  }
-
-  this.initialize();
-}
-
-
-module.exports = Post;
-
-},{}],7:[function(require,module,exports){
 /**
  * @author dmarcos / http://github.com/dmarcos
  * @author mvattuone  / http://github.com/mvattuone
@@ -50006,10 +49984,9 @@ module.exports = function(THREE) {
 
         var sphere = app.intersects[0].object.name;
 
-        if (sphere === "blog") { song = 1; }
-        else if (sphere === "projects") { song = 2; }
-        else if (sphere === "contact") { song = 3; }
-        else if (sphere === "about") { song = 4; }
+        if (sphere === "projects") { song = 1; }
+        else if (sphere === "contact") { song = 2; }
+        else if (sphere === "about") { song = 3; }
         else return false; 
 
         if (app.currentSong === song) {
@@ -50062,7 +50039,7 @@ module.exports = function(THREE) {
     return VattuonetControls;
 }
 
-},{}],8:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 buildWebcamRoom = function(texture) { 
   var room = new THREE.Mesh( 
       new THREE.BoxGeometry(100000,100000,100000,1,1,1, null, true), 
@@ -50077,10 +50054,9 @@ module.exports = {
     create: buildWebcamRoom,
 };
 
-},{}],9:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 // HIGH LEVEL TODOS
 // * Move Audio code into separate module
-// * Fix scrolling on blog page so panel remains at same position
 // * Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
 // * Move app object creation to a script file
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
@@ -50101,7 +50077,6 @@ Spinner = require('spin.js');
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
 Projects = require('./projects');
-Posts = require('./posts');
 Panel = require('./panel');
 
 createSpinner = function() {
@@ -50178,11 +50153,7 @@ checkRoute = function(route) {
     app.currentPanel = null;
   } 
 
-  if ( route === 'blog') {
-    posts = new Posts();
-    posts.fetch();
-    panel = new Panel('blog');
-  } else if (route === 'projects') {
+  if (route === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
   } else if (route === 'about') {
@@ -50200,7 +50171,7 @@ checkRoute = function(route) {
 
 init = function() {    
 
-  app.routes = ['projects', 'blog', 'about'];
+  app.routes = ['projects', 'about'];
   
 
   document.querySelector('#pi').addEventListener('click', function() {
@@ -50246,7 +50217,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
-},{"./controls":7,"./panel":10,"./posts":11,"./projects":13,"./scene":14,"spin.js":1,"stackblur-canvas":2,"three":4,"three.regular.helvetiker":3,"underscore":5}],10:[function(require,module,exports){
+},{"./controls":6,"./panel":9,"./projects":11,"./scene":12,"spin.js":1,"stackblur-canvas":2,"three":4,"three.regular.helvetiker":3,"underscore":5}],9:[function(require,module,exports){
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Panel = function(name, content) {
@@ -50339,56 +50310,7 @@ Panel.prototype.events = function() {
 
 module.exports = Panel;
 
-},{}],11:[function(require,module,exports){
-var Posts = function() {
-    var Post = require('./Post');
-
-    var self = this;
-
-    this.fetch = function() {
-        var self = this;
-
-        if (!self.data) {
-            var tumblrAPI = document.createElement('script');
-            tumblrAPI.src = 'https://vattuonet.tumblr.com/api/read/json';
-            document.head.appendChild(tumblrAPI);
-
-            tumblrAPI.addEventListener('load', function(e) {
-                self.data = window.tumblr_api_read.posts;
-                self.dispatch(app.currentPanel);
-            });
-        }
-    };
-
-    this.dispatch = function(panel) {
-        var posts = [],
-            post,
-            i;
-
-        for (i=0; i<this.data.length; i++) {
-            var args = this.data[i];
-            if (!args.tags) {
-                post = new Post(args['regular-title'], args['regular-body']);
-                posts.push(post.html);
-            }
-        }
-
-        var html = posts.join("");
-
-        if (panel) {
-            panel.el.children[0].innerHTML = html;
-        }
-
-        return html;
-    };
-
-    return this;
-
-};
-
-module.exports = Posts;
-
-},{"./Post":6}],12:[function(require,module,exports){
+},{}],10:[function(require,module,exports){
 // TODO: Why is the down->up transition still kind of buggy
 // TODO: Why are down->up and right->left not able to use 100% as initial transformed position 
 var Project = function(name, url, image, description, tags) {
@@ -50425,19 +50347,7 @@ var Project = function(name, url, image, description, tags) {
 
 module.exports = Project;
 
-},{}],13:[function(require,module,exports){
-/**
- * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
- * @return the blog panel populated with posts
- */
-
-//    Projects = require('projects')
-//    Code pertaining to getting Tumblr stuff
-//    Tumblr.getPosts() no argument returns all posts
-//    Tumblr.getPosts('') empty string returns all posts with no tags
-//    Tumblr.getPosts('foo') would return all posts tagged with foo
-
-
+},{}],11:[function(require,module,exports){
 Project = require('./project');
 
 Projects = function() {
@@ -50490,7 +50400,7 @@ Projects = function() {
 
 module.exports = Projects;
 
-},{"./project":12}],14:[function(require,module,exports){
+},{"./project":10}],12:[function(require,module,exports){
 revealScene = function(event) { 
   app.spinner.stop();
   document.body.classList.remove('loading');
@@ -50652,7 +50562,7 @@ module.exports = {
   create: initScene
 }
 
-},{"./cube-room":8,"./webcam":16,"./webcam-texture":15}],15:[function(require,module,exports){
+},{"./cube-room":7,"./webcam":14,"./webcam-texture":13}],13:[function(require,module,exports){
 
 // TODO: Maybe there are better modules for this?
 greyScaleTransform = function(data) {
@@ -50758,7 +50668,7 @@ var WebcamTexture = {
 
 module.exports = WebcamTexture;
 
-},{}],16:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 // TODO: Add better error handling
 
 var Webcam = function() {
@@ -50806,7 +50716,7 @@ module.exports = new Webcam;
 
 
 
-},{}]},{},[9])
+},{}]},{},[8])
 
 
 //# sourceMappingURL=bundle.js.map

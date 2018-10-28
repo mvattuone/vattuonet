@@ -1,6 +1,5 @@
 // HIGH LEVEL TODOS
 // * Move Audio code into separate module
-// * Fix scrolling on blog page so panel remains at same position
 // * Figure out why I can't use regular three npm package (has something to do with missing TextGeometry?)
 // * Move app object creation to a script file
 // * Check out https://www.npmjs.com/package/jsmanipulate -- maybe replace "custom" emboss/greyScale and stackblur-canvas
@@ -21,7 +20,6 @@ Spinner = require('spin.js');
 // TODO: This bugs me.
 VattuonetControls = require('./controls')(THREE);
 Projects = require('./projects');
-Posts = require('./posts');
 Panel = require('./panel');
 
 createSpinner = function() {
@@ -98,11 +96,7 @@ checkRoute = function(route) {
     app.currentPanel = null;
   } 
 
-  if ( route === 'blog') {
-    posts = new Posts();
-    posts.fetch();
-    panel = new Panel('blog');
-  } else if (route === 'projects') {
+  if (route === 'projects') {
     projects = new Projects();
     panel = new Panel('projects', projects);
   } else if (route === 'about') {
@@ -120,7 +114,7 @@ checkRoute = function(route) {
 
 init = function() {    
 
-  app.routes = ['projects', 'blog', 'about'];
+  app.routes = ['projects', 'about'];
   
 
   document.querySelector('#pi').addEventListener('click', function() {

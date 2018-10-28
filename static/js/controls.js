@@ -74,10 +74,9 @@ module.exports = function(THREE) {
 
         var sphere = app.intersects[0].object.name;
 
-        if (sphere === "blog") { song = 1; }
-        else if (sphere === "projects") { song = 2; }
-        else if (sphere === "contact") { song = 3; }
-        else if (sphere === "about") { song = 4; }
+        if (sphere === "projects") { song = 1; }
+        else if (sphere === "contact") { song = 2; }
+        else if (sphere === "about") { song = 3; }
         else return false; 
 
         if (app.currentSong === song) {

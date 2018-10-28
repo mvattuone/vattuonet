@@ -1,15 +1,3 @@
-/**
- * Populates blog with posts that are not tagged (i.e. page content) returned from the Tumblr API
- * @return the blog panel populated with posts
- */
-
-//    Projects = require('projects')
-//    Code pertaining to getting Tumblr stuff
-//    Tumblr.getPosts() no argument returns all posts
-//    Tumblr.getPosts('') empty string returns all posts with no tags
-//    Tumblr.getPosts('foo') would return all posts tagged with foo
-
-
 Project = require('./project');
 
 Projects = function() {
