@@ -24,8 +24,6 @@ Projects = require('./projects');
 Posts = require('./posts');
 Panel = require('./panel');
 
-THREE.typeface_js.loadFace(helvetiker);
-
 createSpinner = function() {
   document.body.classList.add('loading');
   var opts = {lines: 9 ,length: 28,width: 16,radius: 42,scale: 0.75,corners: 1,color: '#000',opacity: 0.25,rotate: 30,direction: 1,speed: 1,trail: 60,fps: 20,zIndex: 2e9,className: 'spinner',top: '50%',left: '50%',shadow: false,hwaccel: true }

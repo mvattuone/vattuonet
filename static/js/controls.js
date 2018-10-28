@@ -38,7 +38,6 @@ module.exports = function(THREE) {
 
       this.onMouseMove = function ( event ) {
           if ( app.camControls.enabled === false ) return;
-        console.log('fart', event);
           var movementX = event.movementX || 0,
               movementY = event.movementY || 0;
 

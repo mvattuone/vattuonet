@@ -119,17 +119,21 @@ initScene = function() {
 
 // Create navigation label that goes above each sphere.
 buildLabel = function(labelText) {  
-
+  var loader = new THREE.FontLoader();
+  var textGeo;
   var textMat = new THREE.MeshPhongMaterial({
     color: 0xdddddd
   })
 
-  var textGeo = new THREE.TextGeometry(labelText.toUpperCase(), {
-    font: 'helvetiker',
-    weight: 'normal',
-    style: 'normal',
-    size: '14',
-    height: '2',
+  loader.load('static/fonts/helvetiker_regular.typeface.json', function (font) { 
+    console.log(font);
+    textGeo = new THREE.TextGeometry(labelText.toUpperCase(), {
+      font: font,
+      weight: 'normal',
+      style: 'normal',
+      size: '14',
+      height: '2',
+    });
   });
 
   return new THREE.Mesh(textGeo, textMat);

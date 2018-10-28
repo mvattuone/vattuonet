@@ -28,7 +28,7 @@
     "gulp": "^3.9.0",
     "spin.js": "^2.3.2",
     "stackblur-canvas": "1.1.0",
-    "three": "0.71.1",
+    "three": "^0.95.0",
     "three.regular.helvetiker": "1.0.0",
     "underscore": "1.8.3"
   }
