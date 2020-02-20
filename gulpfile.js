@@ -31,5 +31,5 @@ gulp.task('javascript', function () {
 });
 
 gulp.task('watch', function() { 
-  gulp.watch(['static/js/*'], ['javascript']);
+  gulp.watch(['static/js/*'], gulp.series('javascript'));
 });

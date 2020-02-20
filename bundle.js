@@ -50157,9 +50157,9 @@ checkRoute = function(route) {
     projects = new Projects();
     panel = new Panel('projects', projects);
   } else if (route === 'about') {
-    panel = new Panel('about', "<h3>My name is Mike Vattuone. I am a musician and full stack web developer living in Brooklyn, New York, currently working at Condé Nast.</h3><h3>I am particularly interested in data visualization, cognitive science, and the evolution of the browser and personal computing over time, especially with regard to its cultural effects on things like media consumption, education, and civic engagement. You can get a better sense of my skill set by looking at my <a href='/resume-vattuone.pdf'>resume</a> and my <a href='#projects'>projects</a>.</h3><h3>When I'm not writing code, I'm either writing music or words, learning, wishing I had my bike, or pretending to cook.</h3>");
+    panel = new Panel('about', "<h3>My name is Mike Vattuone. I am a musician and full stack web developer living in Brooklyn, New York, currently working at Idealist.</h3><h3>I am particularly interested in data visualization, cognitive science, and the evolution of the browser and personal computing over time, especially with regard to its cultural effects on things like media consumption, education, and civic engagement. You can get a better sense of my skill set by looking at my <a href='/resume-vattuone.pdf'>resume</a> and my <a href='#projects'>projects</a>.</h3><h3>When I'm not writing code, I'm probably playing music, learning something that may or may not be useful, or making soup from scratch.</h3>");
   } else if (route === 'contact') {
-    window.location.href = "mailto:mike@vattuo.net?subject=Hello+Hooray";
+    window.location.href = "mailto:mike@vattuo.net?subject=Hello Friend";
     panel = false;
   } else {
     panel = false;
@@ -50693,11 +50693,7 @@ var Webcam = function() {
 
   // Question: Since this is a callback we can't rely on Webcam function scope??
   this.success = function(stream) { 
-    if (self.output.mozSrcObject !== undefined) {
-      self.output.mozSrcObject = stream;
-    } else {
-      self.output.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-    };
+    self.output.srcObject = stream;
 
     self.stream = stream;
 

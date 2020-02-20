@@ -1,3 +1,4 @@
 .DS_Store
 static/projects/orig
 node_modules
+tags

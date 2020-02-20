@@ -22,11 +22,7 @@ var Webcam = function() {
 
   // Question: Since this is a callback we can't rely on Webcam function scope??
   this.success = function(stream) { 
-    if (self.output.mozSrcObject !== undefined) {
-      self.output.mozSrcObject = stream;
-    } else {
-      self.output.src = (window.URL && window.URL.createObjectURL(stream)) || stream;
-    };
+    self.output.srcObject = stream;
 
     self.stream = stream;
 
