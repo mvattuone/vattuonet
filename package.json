@@ -28,7 +28,7 @@
   "dependencies": {
     "spin.js": "^2.3.2",
     "stackblur-canvas": "1.1.0",
-    "three": "^0.95.0",
+    "three": "^0.125.0",
     "three.regular.helvetiker": "1.0.0",
     "underscore": "1.8.3"
   }
