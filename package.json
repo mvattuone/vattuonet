@@ -17,7 +17,7 @@
   },
   "homepage": "https://github.com/mvattuone/vattuonet#readme",
   "devDependencies": {
-    "browserify": "11.2.0",
+    "browserify": "17.0.0",
     "gulp": "^4.0.2",
     "gulp-sourcemaps": "1.6.0",
     "gulp-uglify": "1.4.2",
